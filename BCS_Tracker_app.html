@@ -1,0 +1,560 @@
+<title>BCS Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap">
+<style>
+/* Layout: gradient progress hero + colour-coded subjects. Two columns on wide screens, one column + bottom tabs on phones. */
+:root{
+  --bg:#eef3f8; --surface:#ffffff; --surface2:#e6edf5; --ink:#101b2b; --muted:#5a6b80; --line:#d9e2ec;
+  --accent:#0f8f78; --accent-ink:#ffffff; --accent-soft:#d7f1ea;
+  --due:#e0432a; --due-soft:#fde4de; --learn:#2f6df0; --learn-soft:#dde8ff; --watch:#0f8f78; --watch-soft:#d7f1ea;
+  --s0:#6b7c90; --s0b:#e6edf5;
+  --p1:#2f6df0; --p2:#12a15a; --p3a:#ffb21a; --p3b:#ff7a1a; --p3ink:#2a1500;
+  --hero1:#0c6e62; --hero2:#2646c9;
+  --sl:42%;
+  --shadow:0 1px 2px rgba(16,27,43,.06),0 10px 26px rgba(16,27,43,.08);
+  --head:'Bricolage Grotesque','Hind Siliguri',system-ui,sans-serif;
+  --body:'Hind Siliguri',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1220; --surface:#131d30; --surface2:#1b2840; --ink:#e9f0fb; --muted:#93a4bd; --line:#24344f;
+  --accent:#34d1ac; --accent-ink:#04231b; --accent-soft:#0f3a33;
+  --due:#ff8466; --due-soft:#3b1f1a; --learn:#7aa7ff; --learn-soft:#172b52; --watch:#34d1ac; --watch-soft:#0f3a33;
+  --s0:#8da0ba; --s0b:#1b2840;
+  --p1:#4b82ff; --p2:#1fb468; --hero1:#0b5b52; --hero2:#2a3fa8;
+  --sl:64%;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1220; --surface:#131d30; --surface2:#1b2840; --ink:#e9f0fb; --muted:#93a4bd; --line:#24344f;
+  --accent:#34d1ac; --accent-ink:#04231b; --accent-soft:#0f3a33;
+  --due:#ff8466; --due-soft:#3b1f1a; --learn:#7aa7ff; --learn-soft:#172b52; --watch:#34d1ac; --watch-soft:#0f3a33;
+  --s0:#8da0ba; --s0b:#1b2840;
+  --p1:#4b82ff; --p2:#1fb468; --hero1:#0b5b52; --hero2:#2a3fa8;
+  --sl:64%;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px rgba(0,0,0,.3); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:auto}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 100px;-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1040px;margin-inline:auto}
+header.top{max-width:760px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px 12px}
+.brand{font-family:var(--head);font-weight:800;font-size:24px;letter-spacing:-.02em;line-height:1.15}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:12.5px;color:var(--muted);letter-spacing:0;line-height:1.6;margin-top:3px;white-space:nowrap}
+.date{font-size:13px;color:var(--muted);font-weight:500;text-align:right}
+h2{font-family:var(--head);font-size:18px;margin:0 0 10px;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+h2 span{font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.stack{display:grid;gap:14px;align-content:start;min-width:0}
+.cols{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+.cols{max-width:760px;margin-inline:auto}
+/* hero */
+.hero{background:linear-gradient(135deg,var(--hero1),var(--hero2));color:#fff;border:0;overflow:hidden;position:relative}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero-grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;position:relative;z-index:1}
+.ring{position:relative;width:124px;height:124px}
+.ring svg{width:124px;height:124px;transform:rotate(-90deg)}
+.ring .num{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-family:var(--head);font-weight:800;font-size:30px;line-height:1}
+.ring .num small{display:block;font-family:var(--body);font-size:11px;font-weight:500;opacity:.85;margin-top:2px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0}
+.tile{background:rgba(255,255,255,.14);border-radius:14px;padding:8px 10px;min-width:0}
+.tile b{display:block;font-family:var(--head);font-size:20px;line-height:1.15;font-variant-numeric:tabular-nums}
+.tile span{font-size:12px;opacity:.9}
+.mile{margin:14px 0 0;font-size:13px;opacity:.92;position:relative;z-index:1}
+.week{display:flex;gap:6px;align-items:center;margin-top:10px;position:relative;z-index:1}
+.week i{width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.16);display:grid;place-items:center;font-style:normal;font-size:12px}
+.week i.on{background:#fff;color:#0c6e62;font-weight:800}
+.week span{margin-left:auto;font-size:12px;opacity:.9}
+.banner{background:var(--due-soft);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:14px}
+/* next task */
+.next{border:0;color:var(--ink);background:linear-gradient(160deg,var(--watch-soft),var(--surface) 70%)}
+.next.rev{background:linear-gradient(160deg,var(--due-soft),var(--surface) 70%)}
+.next.lrn{background:linear-gradient(160deg,var(--learn-soft),var(--surface) 70%)}
+.next .tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 11px;border-radius:999px;background:var(--watch);color:var(--accent-ink);margin-bottom:10px;letter-spacing:.02em}
+.next.rev .tag{background:var(--due);color:#fff} .next.lrn .tag{background:var(--learn);color:#fff}
+.next .what{font-size:19px;font-weight:600;line-height:1.4;margin:0 0 4px;overflow-wrap:anywhere}
+.next .where{font-size:13px;color:var(--muted);margin:0 0 14px;overflow-wrap:anywhere}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 16px;font-weight:600;font-size:14px}
+.btn.primary{background:var(--watch);border-color:transparent;color:var(--accent-ink);box-shadow:0 4px 12px rgba(15,143,120,.3)}
+.next.rev .btn.primary{background:var(--due);color:#fff;box-shadow:0 4px 12px rgba(224,67,42,.3)}
+.next.lrn .btn.primary{background:var(--learn);color:#fff;box-shadow:0 4px 12px rgba(47,109,240,.3)}
+.btn.warn{color:var(--due)}
+.focus{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:14px}
+.focus select{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 8px;max-width:100%;min-width:0}
+/* due */
+.due-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.due-item:first-of-type{border-top:0}
+.due-item p{margin:0;overflow-wrap:anywhere;min-width:0}
+.due-item small{color:var(--muted);display:block;font-size:12px}
+.pill-due{font-size:11px;font-weight:700;padding:1px 9px;border-radius:999px;background:var(--due);color:#fff;white-space:nowrap}
+/* subjects */
+.subj{--c:hsl(var(--h) 70% var(--sl));display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;padding:10px 0;border-top:1px solid var(--line);width:100%;background:none;border-inline:0;border-bottom:0;text-align:left}
+.subj:first-of-type{border-top:0}
+.subj b{font-weight:600;overflow-wrap:anywhere}
+.subj b::before,.chip i{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c);margin-right:8px}
+.subj em{font-style:normal;color:var(--muted);font-size:12px;margin-left:6px}
+.subj .n{font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted);text-align:right;white-space:nowrap}
+.bar{grid-column:1/-1;height:8px;border-radius:99px;background:var(--surface2);overflow:hidden;margin-top:4px}
+.bar>i{display:block;height:100%;background:var(--c,var(--accent));border-radius:99px;transition:width .3s}
+/* syllabus */
+.syl{max-width:760px;margin-inline:auto}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-block:6px 10px;scrollbar-width:none;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+.chips::-webkit-scrollbar{display:none}
+.chip{--c:hsl(var(--h,160) 70% var(--sl));flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-weight:500;font-size:14px;display:inline-flex;align-items:center}
+.chip i{margin-right:7px}
+.chip[aria-pressed="true"]{background:var(--c);color:#fff;border-color:transparent;font-weight:600}
+.chip[aria-pressed="true"] i{background:#fff}
+.chip.all[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tools{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tools input[type=search]{flex:1 1 180px;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:9px 14px;font-size:13px;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:600}
+.lec{--c:hsl(var(--h) 70% var(--sl));background:var(--surface);border:1px solid var(--line);border-radius:18px;margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow)}
+.lec-top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch}
+.lec-head{border:0;background:none;text-align:left;padding:13px 8px 13px 15px;min-width:0;display:grid;gap:7px}
+.lec-head b{font-weight:600;overflow-wrap:anywhere}
+.lec-head b::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c);margin-right:8px}
+.lec-head .meta{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--muted)}
+.lec-head .bar{margin:0;height:6px;flex:1}
+.watch{border:0;border-left:1px solid var(--line);background:none;padding:0 14px;min-width:88px;font-size:12px;font-weight:600;color:var(--muted);display:grid;place-items:center;gap:3px}
+.watch .box{width:26px;height:26px;border-radius:9px;border:2px solid var(--line);display:grid;place-items:center;font-size:15px;color:transparent}
+.watch[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft)}
+.watch[aria-pressed="true"] .box{background:var(--watch);border-color:var(--watch);color:var(--accent-ink)}
+.topics{border-top:1px solid var(--line);padding:4px 15px 10px}
+.t{padding:11px 0;border-top:1px solid var(--line)}
+.t:first-child{border-top:0}
+.t-main{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start}
+.t-main p{margin:0;overflow-wrap:anywhere;min-width:0}
+.tag2{display:inline-block;font-size:11px;font-weight:700;padding:0 8px;border-radius:6px;background:var(--surface2);color:var(--muted);margin-right:6px}
+.st{border:0;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;white-space:nowrap;display:inline-flex;gap:5px;align-items:center}
+.st0{background:var(--s0b);color:var(--s0)}
+.st1{background:var(--p1);color:#fff}
+.st2{background:var(--p2);color:#fff}
+.pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+.pick button{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:8px 2px;font-size:12px;font-weight:600;display:grid;gap:0;justify-items:center;line-height:1.25}
+.pick button b{font-size:18px}
+.pick .p0[aria-pressed="true"]{background:var(--s0b);border-color:var(--s0)}
+.pick .p1[aria-pressed="true"]{background:var(--p1);border-color:var(--p1);color:#fff}
+.pick .p2[aria-pressed="true"]{background:var(--p2);border-color:var(--p2);color:#fff}
+.rv{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;gap:8px;padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));z-index:10}
+nav.tabs button{flex:1;max-width:240px;border:0;background:none;border-radius:14px;padding:8px;font-weight:600;color:var(--muted);display:grid;gap:0;justify-items:center;font-size:13px}
+nav.tabs button b{font-size:18px;line-height:1.1}
+nav.tabs button[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;font-size:14px;z-index:20;max-width:calc(100vw - 32px)}
+.empty{color:var(--muted);padding:6px 0;margin:0}
+@media (max-width:420px){.hero-grid{grid-template-columns:1fr;justify-items:center}.tiles{width:100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.hello h1{font-family:var(--head);font-weight:800;font-size:28px;letter-spacing:-.025em;line-height:1.15;margin:0}
+.hello p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.hello{padding-block:2px 16px;max-width:760px;margin-inline:auto}
+h2.plain{margin:6px 2px 10px}
+:root{--due-c:#e0432a;--learn-c:#2f6df0;--watch-c:#0f8f78}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--due-c:#ff8466;--learn-c:#7aa7ff;--watch-c:#34d1ac}}
+:root[data-theme="dark"]{--due-c:#ff8466;--learn-c:#7aa7ff;--watch-c:#34d1ac}
+.next{border-radius:28px;padding:0;background:linear-gradient(135deg,#0c6e62,#1a8f7a);color:#fff;box-shadow:0 18px 40px -18px rgba(12,110,98,.7);overflow:hidden;position:relative}
+.next.rev{background:linear-gradient(135deg,#0c6e62,#1a8f7a);box-shadow:0 18px 40px -18px rgba(12,110,98,.7)}
+.next.lrn{background:linear-gradient(135deg,#0c6e62,#1a8f7a);box-shadow:0 18px 40px -18px rgba(12,110,98,.7)}
+.next::after{content:"";position:absolute;right:-70px;bottom:-90px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.1)}
+.next-in{padding:22px;position:relative;z-index:1}
+.next .tag,.next.rev .tag,.next.lrn .tag{background:rgba(255,255,255,.2);color:#fff;font-size:11px;letter-spacing:.08em}
+.next .what{font-size:22px;line-height:1.35;font-weight:700;margin:2px 0 6px;color:#fff}
+.next .where{color:rgba(255,255,255,.85);margin-bottom:18px}
+.next .btn.primary,.next.rev .btn.primary,.next.lrn .btn.primary{background:#fff;color:#0f2a26;box-shadow:0 6px 16px rgba(0,0,0,.18);padding:12px 20px;border-radius:14px}
+.next .btn.ghost{background:rgba(255,255,255,.16);border-color:transparent;color:#fff;padding:12px 18px;border-radius:14px}
+.next .focus{color:rgba(255,255,255,.85);margin-top:18px}
+.next .focus select{background:rgba(255,255,255,.16);border-color:transparent;color:#fff}
+.next .focus select option{color:#111}
+.plan{display:grid;gap:8px}
+.pl{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-radius:16px;background:var(--surface2)}
+.pl .ck{width:28px;height:28px;border-radius:50%;border:2px solid var(--c);display:grid;place-items:center;font-weight:800;color:#fff;font-size:15px}
+.pl.done .ck{background:var(--c)}
+.pl b{display:block;font-weight:600}
+.pl small{color:var(--muted);font-size:12px}
+.pl .sr{font-size:12px;font-weight:700;color:var(--c)}
+.pl.done b{text-decoration:line-through;text-decoration-color:var(--muted);color:var(--muted)}
+.prog-top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
+.prog .ring{color:var(--ink)}
+.prog .ring .num small{opacity:1;color:var(--muted)}
+.prog .ring circle:first-child{stroke:var(--surface2)}
+.prog .ring circle:last-child{stroke:var(--accent)}
+.prog .tile{background:var(--surface2);color:var(--ink)}
+.prog .tile i{font-style:normal;font-size:12px;font-weight:500;color:var(--muted)}
+.prog .tile span{color:var(--muted);opacity:1}
+.prog .mile{color:var(--muted);opacity:1;margin:14px 0 0}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:14px}
+.wd{display:grid;justify-items:center;gap:4px;font-size:11px;color:var(--muted);font-weight:600}
+.wd i{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;font-style:normal;font-size:13px;color:#fff}
+.wd.on i{background:var(--accent);color:var(--accent-ink)}
+.wd.now i{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent)}
+.sgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:560px){.sgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:860px){.sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sc{--c:hsl(var(--h) 70% var(--sl));background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:12px;text-align:left;display:grid;gap:10px;box-shadow:var(--shadow)}
+.sc .mr{position:relative;width:46px;height:46px;display:block}
+.sc .mr svg{width:46px;height:46px}
+.sc .mr b{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;font-variant-numeric:tabular-nums}
+.sc .sn{display:grid;gap:0;min-width:0}
+.sc .sn b{font-weight:700;font-size:15px;overflow-wrap:anywhere}
+.sc .sn em{font-style:normal;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.sc .sn small{font-size:11px;color:var(--muted);margin-top:4px}
+.card{border-radius:24px}
+.btn.ghost{background:transparent}
+@media (max-width:420px){.prog-top{grid-template-columns:1fr;justify-items:center}.prog .tiles{width:100%}}
+
+.icon{border:1px solid var(--line);background:var(--surface);border-radius:12px;width:38px;height:38px;font-size:22px;line-height:1;display:grid;place-items:center}
+.icon.sm{width:30px;height:30px;font-size:18px;border-radius:10px}
+.wk-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.wk-head>div{flex:1;text-align:center;min-width:0}
+.wk-head b{font-family:var(--head);font-size:18px;display:block}
+.wk-head small{color:var(--muted);font-size:12px}
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-bottom:6px}
+.dp{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 2px;display:grid;justify-items:center;gap:1px;text-align:center}
+.dp span{font-size:11px;color:var(--muted);font-weight:600}
+.dp b{font-family:var(--head);font-size:18px}
+.dp em{font-style:normal;min-height:14px;font-size:10px;font-weight:700;color:var(--due-c);display:flex;gap:3px;align-items:center}
+.dp em i{width:8px;height:8px;border-radius:50%;background:hsl(var(--h) 70% var(--sl))}
+.dp.now{background:var(--accent);border-color:transparent}
+.dp.now span,.dp.now b,.dp.now em{color:var(--accent-ink)}
+.dp.sat{border-color:var(--due-c)}
+.slots{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);margin-bottom:14px}
+@media (min-width:640px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.slot{border-radius:22px;padding:14px;text-align:left}
+.empty-slot{border:2px dashed var(--line);background:transparent;display:grid;place-items:center;gap:2px;min-height:130px;color:var(--muted);font-weight:600}
+.empty-slot b{font-size:30px;line-height:1;color:var(--accent)}
+.slot.filled{--c:hsl(var(--h) 70% var(--sl));background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);display:grid;gap:8px}
+.slot-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center}
+.slot .num{width:30px;height:30px;border-radius:10px;background:var(--c);color:#fff;font-weight:800;display:grid;place-items:center}
+.slot-t b{display:block;font-weight:700;overflow-wrap:anywhere}
+.slot-t small{color:var(--muted);font-size:12px}
+.slot .bar{margin:0;height:6px}
+.slot .sub{margin:0;font-size:12px;color:var(--muted)}
+.slot-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tg{border:1px solid var(--line);background:var(--surface2);border-radius:12px;padding:8px 12px;font-weight:600;font-size:13px}
+.tg.on{background:var(--watch);border-color:transparent;color:var(--accent-ink)}
+.tg.ok{background:var(--p2);color:#fff}
+.sel{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.addmore{width:100%;margin:10px 0 14px;border:2px dashed var(--line);background:none;border-radius:16px;padding:12px;font-weight:700;color:var(--muted)}
+.sel select,.sel input{border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:6px 8px;width:auto;max-width:96px}
+.sel input{width:64px}
+.link{border:0;background:none;color:var(--accent);font-weight:600;text-align:left;padding:0;font-size:13px}
+.wx{margin-bottom:14px}
+.btn.primary2{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.wkrows{display:grid;gap:6px}
+.wkrow{--c:hsl(var(--h) 70% var(--sl));display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:9px 12px}
+.wkrow.now{border-color:var(--accent);background:var(--accent-soft)}
+.wkrow .dot,.pickrow .dot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.pickrow{--c:hsl(var(--h) 70% var(--sl))}
+.wkrow .wl b{display:block;font-weight:600;font-size:14px;overflow-wrap:anywhere}
+.wkrow .wl small{color:var(--muted);font-size:12px}
+.wd2{font-size:12px;font-weight:700;color:var(--muted);text-align:right}
+.wd2 i{font-style:normal;color:var(--p2)}
+.wkfoot{margin:10px 2px 0;font-size:13px;color:var(--muted)}
+.sheet{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:center}
+.sheet-bg{position:absolute;inset:0;background:rgba(5,10,20,.55)}
+.sheet-card{position:relative;background:var(--surface);width:100%;max-width:640px;max-height:82%;border-radius:24px 24px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--head);font-size:18px}
+.chips2{display:flex;flex:none;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 6px;min-height:44px;align-items:center}
+.sheet-h,.sheet-card input[type=search]{flex:none}
+.chips2 .chip{flex:none}
+.sheet-card input[type=search]{border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:10px 14px;width:100%}
+#sheetList{overflow-y:auto;display:grid;gap:6px;align-content:start}
+.pickrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 12px}
+.pickrow b{display:block;font-weight:600;overflow-wrap:anywhere}
+.pickrow small{color:var(--muted);font-size:12px}
+.pickrow:disabled{opacity:.45}
+nav.tabs button{max-width:170px}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">BCS Tracker<small>৫১তম বিসিএস Pioneer ব্যাচ</small></div>
+    <div class="date" id="date"></div>
+  </header>
+  <main id="view"></main>
+</div>
+<nav class="tabs" aria-label="Sections">
+  <button id="tabToday" aria-current="page"><b>◉</b>Today</button>
+  <button id="tabWeek"><b>▦</b>Week</button>
+  <button id="tabSyl"><b>☰</b>Syllabus</button>
+</nav>
+<div class="sheet" id="sheet" hidden><div class="sheet-bg" data-a="sheetclose"></div><div class="sheet-card" role="dialog" aria-label="Pick a lecture">
+  <div class="sheet-h"><b id="sheetTitle">Pick a lecture</b><button class="btn" data-a="sheetclose">Close</button></div>
+  <div class="chips2" id="sheetChips"></div>
+  <input type="search" id="sheetQ" placeholder="Search lectures" aria-label="Search lectures">
+  <div id="sheetList"></div></div></div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+const DATA=[{"i":"BLG-01","f":"s1","l":"বাংলা ভাষা — লেকচার-০১","sn":"বাংলা","u":[["BLG-01-01","T","","ভাষা ও বাংলা ভাষার উৎপত্তি"],["BLG-01-02","T","","ধ্বনি"],["BLG-01-03","T","","বর্ণ ও অক্ষর"]]},{"i":"BLG-02","f":"s1","l":"বাংলা ভাষা — লেকচার-০২","sn":"বাংলা","u":[["BLG-02-01","T","","সন্ধি"],["BLG-02-02","T","","ধ্বনির পরিবর্তন"],["BLG-02-03","T","","সমার্থক শব্দ"],["BLG-02-04","T","","বিপরীত শব্দ"]]},{"i":"BLG-03","f":"s1","l":"বাংলা ভাষা — লেকচার-০৩","sn":"বাংলা","u":[["BLG-03-01","T","","শব্দ ও শব্দের প্রকারভেদ"],["BLG-03-02","T","","বাংলা বানানের নিয়ম ও বানান শুদ্ধি"],["BLG-03-03","T","","ণ-ত্ব বিধান ও ষ-ত্ব বিধান"]]},{"i":"BLG-04","f":"s1","l":"বাংলা ভাষা — লেকচার-০৪","sn":"বাংলা","u":[["BLG-04-01","T","","পদ"],["BLG-04-02","T","","ছন্দ"],["BLG-04-03","T","","অলংকার"],["BLG-04-04","T","","এক কথায় প্রকাশ"],["BLG-04-05","T","","ক্রিয়ার কাল"]]},{"i":"BLG-05","f":"s1","l":"বাংলা ভাষা — লেকচার-০৫","sn":"বাংলা","u":[["BLG-05-01","T","","কারক ও বিভক্তি"],["BLG-05-02","T","","অনুসর্গ"],["BLG-05-03","T","","দ্বিরুক্ত শব্দ"],["BLG-05-04","T","","পরিভাষা"]]},{"i":"BLG-06","f":"s1","l":"বাংলা ভাষা — লেকচার-০৬","sn":"বাংলা","u":[["BLG-06-01","T","","সমাস"],["BLG-06-02","T","","প্রবাদ-প্রবচনের নিহিতার্থ প্রকাশ"],["BLG-06-03","T","","বাগ্ধারা"]]},{"i":"BLG-07","f":"s1","l":"বাংলা ভাষা — লেকচার-০৭","sn":"বাংলা","u":[["BLG-07-01","T","","উপসর্গ"],["BLG-07-02","T","","ধাতু"],["BLG-07-03","T","","প্রকৃতি-প্রত্যয়"],["BLG-07-04","T","","যতি চিহ্নের ব্যবহার"]]},{"i":"BLG-08","f":"s1","l":"বাংলা ভাষা — লেকচার-০৮","sn":"বাংলা","u":[["BLG-08-01","T","","বাক্য ও বাক্য প্রকরণ"],["BLG-08-02","T","","বাক্যের পারস্পরিক রূপান্তর"],["BLG-08-03","T","","বাক্য শুদ্ধি ও প্রয়োগ-অপপ্রয়োগ"]]},{"i":"BLT-01","f":"s1","l":"বাংলা সাহিত্য — লেকচার-০১","sn":"বাংলা","u":[["BLT-01-01","T","","বাংলা সাহিত্যের যুগ বিভাগ"],["BLT-01-02","T","","প্রাচীন যুগ ও চর্যাপদ"],["BLT-01-03","T","","অন্ধকার যুগ"],["BLT-01-04","T","","শ্রীকৃষ্ণকীর্তন"],["BLT-01-05","T","","বৈষ্ণব পদাবলী"],["BLT-01-06","T","","চণ্ডীদাস, বিদ্যাপতি, জ্ঞানদাস, গোবিন্দদাস"],["BLT-01-07","T","","জীবনী সাহিত্য"]]},{"i":"BLT-02","f":"s1","l":"বাংলা সাহিত্য — লেকচার-০২","sn":"বাংলা","u":[["BLT-02-01","T","","মঙ্গলকাব্য"],["BLT-02-02","T","","মর্সিয়া সাহিত্য"],["BLT-02-03","T","","নাথ সাহিত্য"],["BLT-02-04","T","","অনুবাদ সাহিত্য"],["BLT-02-05","T","","মুসলিম সাহিত্য"],["BLT-02-06","T","","রোমান্টিক প্রণয়োপাখ্যান ও আরাকান (রোসাঙ্গ) রাজসভায় বাংলা সাহিত্য"],["BLT-02-07","T","","মধ্যযুগের বাংলা সাহিত্যের কয়েকজন পৃষ্ঠপোষক"]]},{"i":"BLT-03","f":"s1","l":"বাংলা সাহিত্য — লেকচার-০৩","sn":"বাংলা","u":[["BLT-03-01","T","","লোকসাহিত্য ও মৈমনসিংহ গীতিকা"],["BLT-03-02","T","","শায়ের-কবিওয়ালা ও পুঁথি সাহিত্য"],["BLT-03-03","T","","আধুনিক যুগের উন্মেষ পর্ব"],["BLT-03-04","T","","ফোর্ট উইলিয়াম কলেজ ও বাংলা গদ্য"],["BLT-03-05","T","","শ্রীরামপুর মিশন ও ছাপাখানা"],["BLT-03-06","T","","হিন্দু কলেজ ও ইয়ংবেঙ্গল"],["BLT-03-07","T","","মোহামেডান লিটারেরি সোসাইটি, বঙ্গীয় মুসলমান সাহিত্য সমাজ, ঢাকা মুসলিম সাহিত্য সমাজ"],["BLT-03-08","T","","বাংলা একাডেমি, বাংলাদেশ এশিয়াটিক সোসাইটি"]]},{"i":"BLT-04","f":"s1","l":"বাংলা সাহিত্য — লেকচার-০৪","sn":"বাংলা","u":[["BLT-04-01","T","","রাজা রামমোহন রায়, লালন শাহ, ঈশ্বরচন্দ্র গুপ্ত, প্যারীচাঁদ মিত্র, মদনমোহন তর্কালঙ্কার"],["BLT-04-02","T","","ঈশ্বরচন্দ্র বিদ্যাসাগর, রামনারায়ণ তর্করত্ন, মাইকেল মধুসূদন দত্ত, রঙ্গলাল বন্দ্যোপাধ্যায়, দীনবন্ধু মিত্র"],["BLT-04-03","T","","নওয়াব ফয়জুন্নেসা চৌধুরানী, বিহারীলাল চক্রবর্তী, কৃষ্ণচন্দ্র মজুমদার, সঞ্জীবচন্দ্র চট্টোপাধ্যায়"]]},{"i":"BLT-05","f":"s1","l":"বাংলা সাহিত্য — লেকচার-০৫","sn":"বাংলা","u":[["BLT-05-01","T","","বঙ্কিমচন্দ্র চট্টোপাধ্যায়, হেমচন্দ্র বন্দ্যোপাধ্যায়, কালী প্রসন্ন সিংহ, কালী প্রসন্ন ঘোষ, নবীনচন্দ্র সেন"],["BLT-05-02","T","","মীর মশাররফ হোসেন, স্বর্ণকুমারী দেবী, কায়কোবাদ, মোহাম্মদ নজিবর রহমান, মোহাম্মদ মোজাম্মেল হক"]]},{"i":"BLT-06","f":"s1","l":"বাংলা সাহিত্য — লেকচার-০৬","sn":"বাংলা","u":[["BLT-06-01","T","","রবীন্দ্রনাথ ঠাকুর, দ্বিজেন্দ্রলাল রায়, কামিনী রায়, দীনেশচন্দ্র সেন, প্রমথ চৌধুরী"],["BLT-06-02","T","","মোহাম্মদ আকরম খাঁ, আবদুল করিম সাহিত্য বিশারদ, শরৎচন্দ্র চট্টোপাধ্যায়, দক্ষিণারঞ্জন মিত্র মজুমদার, যতীন্দ্রমোহন বাগচী"]]},{"i":"BLT-07","f":"s1","l":"বাংলা সাহিত্য — লেকচার-০৭","sn":"বাংলা","u":[["BLT-07-01","T","","রোকেয়া সাখাওয়াত হোসেন, সৈয়দ ইসমাইল হোসেন সিরাজী, কাজী ইমদাদুল হক, সত্যেন্দ্রনাথ দত্ত, ড. মুহম্মদ শহীদুল্লাহ"],["BLT-07-02","T","","সুকুমার রায়, মোহিতলাল মজুমদার, এস ওয়াজেদ আলী, কাজী আবদুল ওদুদ, প্রিন্সিপাল ইব্রাহীম খাঁ"],["BLT-07-03","T","","বিভূতিভূষণ বন্দ্যোপাধ্যায়, মোহাম্মদ ওয়াজেদ আলী, আবুল কালাম শামসুদ্দীন, ডা. মোহাম্মদ লুৎফর রহমান"]]},{"i":"BLT-08","f":"s1","l":"বাংলা সাহিত্য — লেকচার-০৮","sn":"বাংলা","u":[["BLT-08-01","T","","কাজী মোতাহার হোসেন, গোলাম মোস্তফা, আবুল মনসুর আহমদ, তারাশঙ্কর বন্দ্যোপাধ্যায়"],["BLT-08-02","T","","কাজী নজরুল ইসলাম, জীবনানন্দ দাশ, বলাইচাঁদ মুখোপাধ্যায়, অমিয় চক্রবর্তী"]]},{"i":"BLT-09","f":"s1","l":"বাংলা সাহিত্য — লেকচার-০৯","sn":"বাংলা","u":[["BLT-09-01","T","","সুধীন্দ্রনাথ দত্ত, ড. মুহম্মদ এনামুল হক, অচিন্ত্যকুমার সেনগুপ্ত, আবুল ফজল"],["BLT-09-02","T","","জসীম উদদীন, মোতাহের হোসেন চৌধুরী, অন্নদাশঙ্কর রায়, সৈয়দ মুজতবা আলী"],["BLT-09-03","T","","আবদুল কাদির, বন্দে আলী মিয়া, হুমায়ূন কবির, নুরুল মোমেন"],["BLT-09-04","T","","বুদ্ধদেব বসু, মানিক বন্দ্যোপাধ্যায়, শামসুন নাহার মাহমুদ, বিষ্ণু দে"]]},{"i":"BLT-10","f":"s1","l":"বাংলা সাহিত্য — লেকচার-১০","sn":"বাংলা","u":[["BLT-10-01","T","","আবু জাফর শামসুদ্দীন, বেগম সুফিয়া কামাল, নীহাররঞ্জন গুপ্ত, অদ্বৈত মল্লবর্মণ, আহসান হাবীব"],["BLT-10-02","T","","শওকত ওসমান, ফররুখ আহমদ, সিকান্দার আবু জাফর, মুহম্মদ আবদুল হাই"],["BLT-10-03","T","","আহমদ শরীফ, নীলিমা ইব্রাহিম, সৈয়দ আলী আহসান, সৈয়দ ওয়ালীউল্লাহ"],["BLT-10-04","T","","সমরেশ বসু, মুনীর চৌধুরী, রশীদ করিম, আবু ইসহাক"]]},{"i":"BLT-11","f":"s1","l":"বাংলা সাহিত্য — লেকচার-১১","sn":"বাংলা","u":[["BLT-11-01","T","","শামসুদ্দীন আবুল কালাম, সুকান্ত ভট্টাচার্য, শহীদুল্লা কায়সার, আনোয়ার পাশা, জাহানারা ইমাম"],["BLT-11-02","T","","শামসুর রাহমান, সৈয়দ মুস্তফা সিরাজ, সাঈদ আহমেদ, আবদুল্লাহ আল-মুতী শরফুদ্দীন"],["BLT-11-03","T","","ড. আলাউদ্দিন আল আজাদ, হাসান হাফিজুর রহমান, আবদুল গাফফার চৌধুরী, আবু জাফর ওবায়দুল্লাহ"],["BLT-11-04","T","","সুনীল গঙ্গোপাধ্যায়, জহির রায়হান, মমতাজ উদ্দীন আহমদ, রাবেয়া খাতুন"]]},{"i":"BLT-12","f":"s1","l":"বাংলা সাহিত্য — লেকচার-১২","sn":"বাংলা","u":[["BLT-12-01","T","","সৈয়দ শামসুল হক, আবু হেনা মোস্তফা কামাল, আল মাহমুদ, রাজিয়া খান"],["BLT-12-02","T","","শওকত আলী, ড. আনিসুজ্জামান, হাসান আজিজুল হক, মহাদেব সাহা"],["BLT-12-03","T","","মাহমুদুল হক, আবদুল্লাহ আল মামুন, রফিক আজাদ, শহীদ কাদরী"],["BLT-12-04","T","","আখতারুজ্জামান ইলিয়াস, আবদুল মান্নান সৈয়দ, আহমদ ছফা, হুমায়ূন আজাদ"]]},{"i":"BLT-13","f":"s1","l":"বাংলা সাহিত্য — লেকচার-১৩","sn":"বাংলা","u":[["BLT-13-01","T","","সেলিনা হোসেন, হুমায়ূন আহমেদ, মামুনুর রশীদ, সেলিম আল দীন"],["BLT-13-02","T","","ইমদাদুল হক মিলন, রুদ্র মুহম্মদ শহীদুল্লাহ, আনিসুল হক"],["BLT-13-03","T","","বিখ্যাত পত্রিকা এবং সম্পাদক"],["BLT-13-04","T","","বাংলা সাহিত্যের বিখ্যাত চরিত্র, সাহিত্যিকদের উপাধি ও ছদ্মনাম"]]},{"i":"BLT-14","f":"s1","l":"বাংলা সাহিত্য — লেকচার-১৪","sn":"বাংলা","u":[["BLT-14-01","T","","দেশভাগভিত্তিক রচনা সমগ্র"],["BLT-14-02","T","","ভাষা আন্দোলনভিত্তিক রচনাসমগ্র"],["BLT-14-03","T","","মুক্তিযুদ্ধভিত্তিক রচনাসমগ্র"],["BLT-14-04","T","","সাহিত্যিকদের বিখ্যাত উক্তি"],["BLT-14-05","T","","বাংলা সাহিত্যে যা কিছু প্রথম"],["BLT-14-06","T","","বাংলা সাহিত্যের ইতিহাস বিষয়ক গ্রন্থ"],["BLT-14-07","T","","বাংলাদেশের জনপ্রিয় লোকগান (বাউল গান, পল্লীগীতি, ভাটিয়ালি, মরমী)"]]},{"i":"ELG-01","f":"s2","l":"ইংরেজি ভাষা — লেকচার-০১","sn":"ইংরেজি","u":[["ELG-01-01","T","","Noun"],["ELG-01-02","T","","Article"],["ELG-01-03","H","","Homework: Vocabulary- A-F"],["ELG-01-04","W","","Written: Practicing Interchange of Parts of Speech (Part-01)."]]},{"i":"ELG-02","f":"s2","l":"ইংরেজি ভাষা — লেকচার-০২","sn":"ইংরেজি","u":[["ELG-02-01","T","","Number"],["ELG-02-02","T","","Gender"],["ELG-02-03","T","","Group Verbs"],["ELG-02-04","H","","Homework: Vocabulary G-M"],["ELG-02-05","W","","Written: Sentence Correction, Making Sentences. (Part-01)"]]},{"i":"ELG-03","f":"s2","l":"ইংরেজি ভাষা — লেকচার-০৩","sn":"ইংরেজি","u":[["ELG-03-01","T","","Pronoun"],["ELG-03-02","T","","Determiner"],["ELG-03-03","H","","Homework: Vocabulary N-S"],["ELG-03-04","W","","Written: Transformation and Correction."]]},{"i":"ELG-04","f":"s2","l":"ইংরেজি ভাষা — লেকচার-০৪","sn":"ইংরেজি","u":[["ELG-04-01","T","","Adjective"],["ELG-04-02","T","","Degree"],["ELG-04-03","H","","Homework: Vocabulary T- Z"],["ELG-04-04","W","","Written: Practicing Interchange of Parts of Speech. (Part-02)"]]},{"i":"ELG-05","f":"s2","l":"ইংরেজি ভাষা — লেকচার-০৫","sn":"ইংরেজি","u":[["ELG-05-01","T","","Verb & Its Classification"],["ELG-05-02","T","","Gerund"],["ELG-05-03","T","","Participle"],["ELG-05-04","H","","Homework: App. Preposition A-F"],["ELG-05-05","W","","Written: Sentence Correction, Making Sentences. (Part-02)"]]},{"i":"ELG-06","f":"s2","l":"ইংরেজি ভাষা — লেকচার-০৬","sn":"ইংরেজি","u":[["ELG-06-01","T","","Right form of Verbs"],["ELG-06-02","T","","Subject-Verb Agreement"],["ELG-06-03","T","","Tense"],["ELG-06-04","H","","Homework: App. Preposition G-M"],["ELG-06-05","W","","Written: Sentence Correction, Making Sentences. (Part-03)"]]},{"i":"ELG-07","f":"s2","l":"ইংরেজি ভাষা — লেকচার-০৭","sn":"ইংরেজি","u":[["ELG-07-01","T","","Adverb"],["ELG-07-02","T","","Modifier"],["ELG-07-03","H","","Homework: App. Preposition N-S"],["ELG-07-04","W","","Written: Error Correction, Transformation."]]},{"i":"ELG-08","f":"s2","l":"ইংরেজি ভাষা — লেকচার-০৮","sn":"ইংরেজি","u":[["ELG-08-01","T","","Conjunction & Linkers"],["ELG-08-02","H","","Homework: App. Preposition T-Z"],["ELG-08-03","W","","Written: relevance in Translation."]]},{"i":"ELG-09","f":"s2","l":"ইংরেজি ভাষা — লেকচার-০৯","sn":"ইংরেজি","u":[["ELG-09-01","T","","Preposition"],["ELG-09-02","W","","Written: Combining Sentences."]]},{"i":"ELG-10","f":"s2","l":"ইংরেজি ভাষা — লেকচার-১০","sn":"ইংরেজি","u":[["ELG-10-01","T","","Phrases"],["ELG-10-02","T","","Clauses"],["ELG-10-03","T","","Analogy"],["ELG-10-04","H","","Homework: Idioms List A-F"],["ELG-10-05","W","","Written: Combining Sentences and eliminating errors."]]},{"i":"ELG-11","f":"s2","l":"ইংরেজি ভাষা — লেকচার-১১","sn":"ইংরেজি","u":[["ELG-11-01","T","","Voice & Narration"],["ELG-11-02","H","","Homework: Idioms List G-M"],["ELG-11-03","W","","Written: Relevance in translation, report writing and summary writing."]]},{"i":"ELG-12","f":"s2","l":"ইংরেজি ভাষা — লেকচার-১২","sn":"ইংরেজি","u":[["ELG-12-01","T","","Transformation"],["ELG-12-02","T","","Spelling List"],["ELG-12-03","H","","Homework: Idioms List N-S"],["ELG-12-04","W","","Written: Making Sentences."]]},{"i":"ELG-13","f":"s2","l":"ইংরেজি ভাষা — লেকচার-১৩","sn":"ইংরেজি","u":[["ELG-13-01","T","","Same word but different parts of speech"],["ELG-13-02","T","","Suffix & Prefix"],["ELG-13-03","T","","Foreign words"],["ELG-13-04","H","","Homework: Idioms List T-Z"],["ELG-13-05","W","","Written: Interchange of Parts of Speech. (Part-03)"]]},{"i":"ELG-14","f":"s2","l":"ইংরেজি ভাষা — লেকচার-১৪","sn":"ইংরেজি","u":[["ELG-14-01","T","","Sentence correction"],["ELG-14-02","T","","one word substitution"],["ELG-14-03","T","","names of parts of paragraphs/ letter/ application"],["ELG-14-04","W","","Written: Eliminating errors, Meanings."]]},{"i":"ELT-01","f":"s2","l":"ইংরেজি সাহিত্য — লেকচার-০১","sn":"ইংরেজি","u":[["ELT-01-01","T","","Introduction to English Literature"],["ELT-01-02","T","","Syllabus Discussion"],["ELT-01-03","T","","Question Analysis"],["ELT-01-04","T","","Study Hacks"],["ELT-01-05","T","","Names of Periods and Ages"],["ELT-01-06","T","","Old & Middle English Period: Anglo Saxon Period"],["ELT-01-07","T","","Old & Middle English Period: The Anglo- Norman Period"],["ELT-01-08","T","","Old & Middle English Period: The Age of Chaucer"],["ELT-01-09","T","","Old & Middle English Period: The Barren Age/Dark Age"],["ELT-01-10","T","","Titles of Literature"],["ELT-01-11","T","","Literary Terms"],["ELT-01-12","T","","Figures of Speech"],["ELT-01-13","T","","Notable Critics"]]},{"i":"ELT-02","f":"s2","l":"ইংরেজি সাহিত্য — লেকচার-০২","sn":"ইংরেজি","u":[["ELT-02-01","T","","Renaissance Period: Preparation for Renaissance"],["ELT-02-02","T","","Renaissance Period: Introduction to Shakespeare"],["ELT-02-03","T","","Renaissance Period: The Elizabethan Period"],["ELT-02-04","T","","Renaissance Period: The Jacobean Period"],["ELT-02-05","T","","Renaissance Period: Caroline Age"],["ELT-02-06","T","","Renaissance Period: Commonwealth Period"],["ELT-02-07","T","","Important writers (Renaissance)"]]},{"i":"ELT-03","f":"s2","l":"ইংরেজি সাহিত্য — লেকচার-০৩","sn":"ইংরেজি","u":[["ELT-03-01","T","","Neo-classical Period: The Restoration Period"],["ELT-03-02","T","","Neo-classical Period: The Augustan Period"],["ELT-03-03","T","","Neo-classical Period: The Age of Sensibility"],["ELT-03-04","T","","Important writers (Neo-classical)"]]},{"i":"ELT-04","f":"s2","l":"ইংরেজি সাহিত্য — লেকচার-০৪","sn":"ইংরেজি","u":[["ELT-04-01","T","","Romantic Period"],["ELT-04-02","T","","Important writers (Romantic)"]]},{"i":"ELT-05","f":"s2","l":"ইংরেজি সাহিত্য — লেকচার-০৫","sn":"ইংরেজি","u":[["ELT-05-01","T","","Victorian Period"],["ELT-05-02","T","","Important writers (Victorian)"]]},{"i":"ELT-06","f":"s2","l":"ইংরেজি সাহিত্য — লেকচার-০৬","sn":"ইংরেজি","u":[["ELT-06-01","T","","Modern & Postmodern Period"],["ELT-06-02","T","","Important writers (Modern & Postmodern)"],["ELT-06-03","T","","Names of American, Irish, Indian and Bangladeshi Writers"]]},{"i":"BDA-01","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-০১","sn":"বাংলাদেশ","u":[["BDA-01-01","T","","প্রাচীনকাল হতে সাম-সময়িক কালের ইতিহাস, কৃষ্টি ও সংস্কৃতি"],["BDA-01-02","T","","বাঙালি জাতির উদ্ভব ও বিকাশ"],["BDA-01-03","T","","বাংলার প্রাচীন জনপদ"],["BDA-01-04","T","","বাংলায় মুসলিম শাসনের আগ পর্যন্ত"]]},{"i":"BDA-02","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-০২","sn":"বাংলাদেশ","u":[["BDA-02-01","T","","বাংলায় মুসলিম শাসন"],["BDA-02-02","T","","স্বাধীন সুলতানী শাসন প্রতিষ্ঠা"],["BDA-02-03","T","","দিল্লি সালতানাত"],["BDA-02-04","T","","বাংলায় ইলিয়াস শাহী শাসন"],["BDA-02-05","T","","হুসেন শাহী যুগ"],["BDA-02-06","T","","মুঘল শাসনামল"],["BDA-02-07","T","","বাংলায় মুঘল শাসন"],["BDA-02-08","T","","বাংলায় নবাবী শাসন"]]},{"i":"BDA-03","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-০৩","sn":"বাংলাদেশ","u":[["BDA-03-01","T","","উপমহাদেশে ইউরোপীয়দের আগমন"],["BDA-03-02","T","","ইস্ট ইন্ডিয়া কোম্পানি ও ব্রিটিশ সরকারের ভারত শাসন (১৭৫৭-১৯৪৭)"],["BDA-03-03","T","","উপমহাদেশে বিভিন্ন বিদ্রোহ ও সংস্কার আন্দোলন"],["BDA-03-04","T","","জাতীয়তাবাদী আন্দোলন"],["BDA-03-05","T","","বঙ্গভঙ্গ ও তৎকালীন রাজনীতি"],["BDA-03-06","T","","বিভাগ-পূর্ব রাজনীতি"],["BDA-03-07","T","","পাকিস্তান রাষ্ট্রের জন্ম"]]},{"i":"BDA-04","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-০৪","sn":"বাংলাদেশ","u":[["BDA-04-01","T","","ভাষা আন্দোলন"],["BDA-04-02","T","","রাষ্ট্রভাষা বাংলার দাবিতে গঠিত সংগ্রাম পরিষদ বা কমিটি"],["BDA-04-03","T","","১৯৫৪ সালের নির্বাচন"],["BDA-04-04","T","","১৯৫৬-১৯৬৫ সালের ঘটনাপুঞ্জি"],["BDA-04-05","T","","গণঅভ্যুত্থান ১৯৬৮-৬৯"],["BDA-04-06","T","","বাংলাদেশের বিভিন্ন রাজনৈতিক ব্যক্তিত্ব"]]},{"i":"BDA-05","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-০৫","sn":"বাংলাদেশ","u":[["BDA-05-01","T","","মুক্তিযুদ্ধের রণকৌশল"],["BDA-05-02","T","","মুক্তিযুদ্ধে বৃহৎ শক্তিবর্গের ভূমিকা"],["BDA-05-03","T","","পাকবাহিনীর আত্মসমর্পণ ও বাংলাদেশের অভ্যুদয়"],["BDA-05-04","T","","বিভিন্ন দেশ কর্তৃক বাংলাদেশের স্বীকৃতি"],["BDA-05-05","T","","মুক্তিযুদ্ধে অবদানের জন্য বীরত্বসূচক খেতাব"],["BDA-05-06","T","","মুক্তিযুদ্ধভিত্তিক সাহিত্য ও চলচ্চিত্র"],["BDA-05-07","T","","১৯৭৫ পরবর্তী বাংলাদেশের শাসনব্যবস্থা"],["BDA-05-08","T","","২০২৪ এর ছাত্র আন্দোলন"]]},{"i":"BDA-06","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-০৬","sn":"বাংলাদেশ","u":[["BDA-06-01","T","","বাংলাদেশের সংবিধান: প্রস্তাবনা ও বৈশিষ্ট্য"],["BDA-06-02","T","","মৌলিক অধিকারসহ রাষ্ট্র পরিচালনার মূলনীতিসমূহ (তৃতীয় ভাগ পর্যন্ত)"],["BDA-06-03","T","","পররাষ্ট্রনীতি"],["BDA-06-04","T","","অর্থনৈতিক কূটনীতি"],["BDA-06-05","T","","শ্রমকূটনীতি"]]},{"i":"BDA-07","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-০৭","sn":"বাংলাদেশ","u":[["BDA-07-01","T","","বাংলাদেশের সংবিধান: সংবিধানের গুরুত্বপূর্ণ অনুচ্ছেদ (চতুর্থ ভাগ থেকে একাদশ ভাগ পর্যন্ত)"],["BDA-07-02","T","","তফসিল"],["BDA-07-03","T","","সংশোধনীসমূহ"]]},{"i":"BDA-08","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-০৮","sn":"বাংলাদেশ","u":[["BDA-08-01","T","","বাংলাদেশের নির্বাচন ও স্বাধীনতা পরবর্তী থেকে বর্তমান পর্যন্ত নির্বাচন"],["BDA-08-02","T","","RPO, সংশোধিত RPO-২০২৫ নির্বাচনী আইন"],["BDA-08-03","T","","পর্যবেক্ষক"],["BDA-08-04","T","","তফসিল"],["BDA-08-05","T","","নির্বাচন কমিশনের গঠন ও কার্যাবলি"]]},{"i":"BDA-09","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-০৯","sn":"বাংলাদেশ","u":[["BDA-09-01","T","","বাংলাদেশের রাজনৈতিক ব্যবস্থা: রাজনৈতিক দলসমূহের গঠন, ভূমিকা ও কার্যক্রম"],["BDA-09-02","T","","১৯৭২ সাল থেকে বর্তমান পর্যন্ত রাজনৈতিক ধারা, অর্জন, ব্যর্থতা"],["BDA-09-03","T","","ক্ষমতাসীন ও বিরোধী দলের পারস্পরিক সম্পর্কাদি"]]},{"i":"BDA-10","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-১০","sn":"বাংলাদেশ","u":[["BDA-10-01","T","","বাংলাদেশের সরকার ব্যবস্থা: আইন, শাসন ও বিচার বিভাগসমূহ"],["BDA-10-02","T","","আইন প্রণয়ন, নীতি নির্ধারণ"],["BDA-10-03","T","","জাতীয় ও স্থানীয় পর্যায়ে প্রশাসনিক ব্যবস্থাপনা কাঠামো"],["BDA-10-04","T","","প্রশাসনিক পুনর্বিন্যাস ও সংস্কার"],["BDA-10-05","T","","স্থানীয় সরকার ব্যবস্থাপনা"]]},{"i":"BDA-11","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-১১","sn":"বাংলাদেশ","u":[["BDA-11-01","T","","বাংলাদেশের অর্থনীতি: উন্নয়ন পরিকল্পনা প্রেক্ষিত"],["BDA-11-02","T","","জাতীয় আয়-ব্যয়"],["BDA-11-03","T","","দারিদ্র্য বিমোচন"],["BDA-11-04","T","","দারিদ্র্য বিমোচনে সরকারের গৃহীত পদক্ষেপ"]]},{"i":"BDA-12","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-১২","sn":"বাংলাদেশ","u":[["BDA-12-01","T","","বাংলাদেশের শিল্প ও বাণিজ্য: শিল্প উৎপাদন"],["BDA-12-02","T","","পণ্য আমদানি ও রপ্তানিকরণ"],["BDA-12-03","T","","গার্মেন্টস শিল্প ও এর সার্থক ব্যবস্থাপনা"]]},{"i":"BDA-13","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-১৩","sn":"বাংলাদেশ","u":[["BDA-13-01","T","","বৈদেশিক লেনদেন, অর্থ প্রেরণ"],["BDA-13-02","T","","ব্যাংক ও বিমা ব্যবস্থাপনা"],["BDA-13-03","T","","রেমিটেন্স, মানি লন্ডারিং"],["BDA-13-04","T","","বাংলাদেশের পরিবেশ এবং প্রকৃতি"],["BDA-13-05","T","","বাংলাদেশের প্রাকৃতিক সম্পদ"],["BDA-13-06","T","","ব্লু-ইকোনমি"]]},{"i":"BDA-14","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-১৪","sn":"বাংলাদেশ","u":[["BDA-14-01","T","","বাংলাদেশের জনসংখ্যা, আদমশুমারি"],["BDA-14-02","T","","জাতি, গোষ্ঠী ও উপজাতি সংক্রান্ত বিষয়াদি"],["BDA-14-03","T","","বাংলাদেশের শিক্ষা"],["BDA-14-04","T","","চিকিৎসা ও স্বাস্থ্য"]]},{"i":"BDA-15","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-১৫","sn":"বাংলাদেশ","u":[["BDA-15-01","T","","বাংলাদেশের কৃষিজ সম্পদ: শস্য উৎপাদন এবং এর বহুমুখীকরণ"],["BDA-15-02","T","","খাদ্য উৎপাদন ও ব্যবস্থাপনা"]]},{"i":"BDA-16","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-১৬","sn":"বাংলাদেশ","u":[["BDA-16-01","T","","সামসময়িক যোগাযোগ ও আইসিটি"],["BDA-16-02","T","","তথ্য অধিকার"],["BDA-16-03","T","","ই-গভর্ন্যান্স"],["BDA-16-04","T","","বাংলাদেশের মৎস্য সম্পদ"],["BDA-16-05","T","","বাংলাদেশের প্রাণী সম্পদ"],["BDA-16-06","T","","খনিজ সম্পদ"],["BDA-16-07","T","","সুন্দরবন"],["BDA-16-08","T","","জাতীয় উদ্যান, বন্য প্রাণীর অভয়ারণ্য, ইকো ও সাফারি পার্ক"]]},{"i":"BDA-17","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-১৭","sn":"বাংলাদেশ","u":[["BDA-17-01","T","","অনানুষ্ঠানিক প্রতিষ্ঠান: সুশীল সমাজ"],["BDA-17-02","T","","স্বার্থান্বেষী গোষ্ঠী ও বাংলাদেশের এনজিও"],["BDA-17-03","T","","সুশীল সমাজ ও চাপ সৃষ্টিকারী গোষ্ঠীসমূহ এবং এদের ভূমিকা"],["BDA-17-04","T","","বাংলাদেশের জেন্ডার ইস্যু ও উন্নয়ন"],["BDA-17-05","T","","SDG"],["BDA-17-06","T","","অর্থনৈতিক অঞ্চল"],["BDA-17-07","T","","শিল্পায়নের প্রতিবন্ধকতা"]]},{"i":"BDA-18","f":"s3","l":"বাংলাদেশ বিষয়াবলি — লেকচার-১৮","sn":"বাংলাদেশ","u":[["BDA-18-01","T","","বাংলাদেশের ভৌগোলিক অবস্থান"],["BDA-18-02","T","","প্রাকৃতিক বৈশিষ্ট্য ও সুবিধা"],["BDA-18-03","T","","মৃত্তিকা"],["BDA-18-04","T","","জলবায়ু"],["BDA-18-05","T","","ম্যানগ্রোভ অঞ্চল"],["BDA-18-06","T","","বরেন্দ্র অঞ্চল"],["BDA-18-07","T","","বরেন্দ্র জাদুঘর"],["BDA-18-08","T","","ব-দ্বীপ"],["BDA-18-09","T","","ছিটমহল"]]},{"i":"INT-01","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-০১","sn":"আন্তর্জাতিক","u":[["INT-01-01","T","","বিশ্ব সভ্যতা, ভাষা, জাতি ও উপজাতি"],["INT-01-02","T","","এশিয়া মহাদেশ: দক্ষিণ এশিয়া, দক্ষিণ-পূর্ব এশিয়া, পূর্ব এশিয়া (দূরপ্রাচ্য), পশ্চিম এশিয়া, মধ্য এশিয়া"],["INT-01-03","T","","দক্ষিণ এশিয়ার রাজনীতি: ভারত বাংলাদেশ সম্পর্ক, বাংলাদেশ মিয়ানমার সম্পর্ক, ভারত-পাকিস্তান যুদ্ধ"]]},{"i":"INT-02","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-০২","sn":"আন্তর্জাতিক","u":[["INT-02-01","T","পার্ট-০১","ইউরোপ মহাদেশ: পশ্চিম ইউরোপ, পূর্ব ইউরোপ, উত্তর ইউরোপ, মধ্য ইউরোপ, দক্ষিণ ইউরোপ"],["INT-02-02","T","পার্ট-০১","বিশ্বের প্রধান শক্তিসমূহের মধ্যে বৈদেশিক সম্পর্ক (মার্কিন যুক্তরাষ্ট্র, রাশিয়া, ইউক্রেন-রাশিয়া পরিস্থিতি)"],["INT-02-03","T","পার্ট-০২","উত্তর আমেরিকা মহাদেশ: উত্তর আমেরিকা, মধ্য আমেরিকা; দক্ষিণ আমেরিকা মহাদেশ: দক্ষিণ আমেরিকা মহাদেশের দেশসমূহ"],["INT-02-04","T","পার্ট-০২","বিশ্বের প্রধান শক্তিসমূহের মধ্যে বৈদেশিক সম্পর্ক (চীন, ভারত)"]]},{"i":"INT-03","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-০৩","sn":"আন্তর্জাতিক","u":[["INT-03-01","T","পার্ট-০১","আফ্রিকা মহাদেশ: আফ্রিকার দক্ষিণাংশের দেশসমূহ, উত্তর আফ্রিকা, পূর্ব আফ্রিকা, মধ্য আফ্রিকা, পশ্চিম আফ্রিকা"],["INT-03-02","T","পার্ট-০১","প্রথম বিশ্বযুদ্ধ ও এর পরবর্তী প্রধান সমস্যা ও সংঘাত"],["INT-03-03","T","পার্ট-০২","ওশেনিয়া মহাদেশ: ওশেনিয়া মহাদেশের দেশসমূহ, পলিনেশিয়া, মেলানেশিয়া ও মাইক্রোনেশিয়া অঞ্চল"],["INT-03-04","T","পার্ট-০২","অ্যান্টার্কটিকা মহাদেশ: অ্যান্টার্কটিকা মহাদেশের তথ্যসমূহ"],["INT-03-05","T","পার্ট-০২","বিভিন্ন দেশের পুরাতন, পরিবর্তিত ও ভৌগোলিক উপনাম"],["INT-03-06","T","পার্ট-০২","দ্বিতীয় বিশ্বযুদ্ধ ও এর পরবর্তী প্রধান সমস্যা ও সংঘাত"]]},{"i":"INT-04","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-০৪","sn":"আন্তর্জাতিক","u":[["INT-04-01","T","","আন্তর্জাতিক সংগঠন: জাতিপুঞ্জ ও জাতিসংঘ, জাতিসংঘের অঙ্গসংগঠন ও সংস্থা"],["INT-04-02","T","","SDG, জাতিসংঘ শীর্ষ সম্মেলন ও শান্তিরক্ষা মিশন"],["INT-04-03","T","","বিশ্বের সক্রিয় ভূমিকা পালনকারী চালকসমূহ: আধুনিক রাষ্ট্র, রাষ্ট্রের প্রকারভেদ, সার্বভৌমত্ব, অ-রাষ্ট্রীয় কর্ম, আন্তর্জাতিক প্রতিষ্ঠান, রাষ্ট্রীয় এবং অ-রাষ্ট্রীয় কর্মসমূহের মধ্যে সম্পর্ক"]]},{"i":"INT-05","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-০৫","sn":"আন্তর্জাতিক","u":[["INT-05-01","T","","অর্থনৈতিক প্রতিষ্ঠান: World bank, IMF, ADB ও IsDB, NDB, GATT and WTO, অন্যান্য অর্থনৈতিক প্রতিষ্ঠান (ECB, WEF, BIS ও AIIB)"],["INT-05-02","T","","আন্তর্জাতিক অর্থনৈতিক সম্পর্ক, সংরক্ষণবাদ, বৈদেশিক সাহায্য, ঋণ সংকট, আর্থিক উদারীকরণ, বৈশ্বিক দারিদ্র্য"]]},{"i":"INT-06","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-০৬","sn":"আন্তর্জাতিক","u":[["INT-06-01","T","","দেশভিত্তিক মুদ্রার নাম: এক নজরে বিভিন্ন মুদ্রা"],["INT-06-02","T","","অর্থনৈতিক জোট: EU (ইউরোপীয় ইউনিয়ন), G-7 ও G-20, অন্যান্য অর্থনৈতিক জোট (ECO, EFTA ও BENELUX)"],["INT-06-03","T","","মুক্ত বাণিজ্য, বিদেশী প্রত্যক্ষ বিনিয়োগ"],["INT-06-04","T","","জাতিসংঘ ব্যবস্থা, উন্নয়নশীল দেশগুলোর LDC থেকে উত্তরণের চ্যালেঞ্জ (বাংলাদেশ ও আন্তর্জাতিক)"],["INT-06-05","T","","মানবাধিকার এজেন্ডা"]]},{"i":"INT-07","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-০৭","sn":"আন্তর্জাতিক","u":[["INT-07-01","T","","বৈশ্বিক ও আঞ্চলিক সংস্থা: SAARC, ASEAN, APEC, BIMSTEC, CIRDAP"],["INT-07-02","T","","G-77, D-8, BRICS, OPEC, RCEP, EU এবং অন্যান্য আঞ্চলিক সংস্থা"]]},{"i":"INT-08","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-০৮","sn":"আন্তর্জাতিক","u":[["INT-08-01","T","","আন্তর্জাতিক রাজনৈতিক সংগঠন: NAM, Commonwealth of Nations, আরব লীগ, OIC, GCC, OAU/AU, SCO, CIS, অন্যান্য আন্তর্জাতিক রাজনৈতিক সংগঠন"],["INT-08-02","T","","আন্তর্জাতিক কৃষি সংস্থা: IJO & IJSG, IRRI, CIMMYT, CIP, ICRISAT"],["INT-08-03","T","","আন্তর্জাতিক সম্পর্কের ভূমিকা, পরিধি ও তাৎপর্য"]]},{"i":"INT-09","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-০৯","sn":"আন্তর্জাতিক","u":[["INT-09-01","T","পার্ট-০১","মতবাদসমূহ: বাস্তববাদ, উদারতাবাদ, সমাজবাদ, সাম্রাজ্যবাদ, ঔপনিবেশবাদ, নব্য ঔপনিবেশবাদ, ডমিনো তত্ত্ব, সংঘর্ষ তত্ত্ব, অন্যান্য মতবাদসমূহ"],["INT-09-02","T","পার্ট-০১","বিশ্ব রাজনীতি, ভূ-রাজনীতি ও যুদ্ধ, বিভিন্ন বিপ্লব, গুরুত্বপূর্ণ আন্তর্জাতিক সংঘাত, চুক্তি ও সনদ"],["INT-09-03","T","পার্ট-০২","পশ্চিম এশিয়া: ইরান-যুক্তরাষ্ট্র যুদ্ধ"],["INT-09-04","T","পার্ট-০২","মধ্যপ্রাচ্য সংকট (ইসরাইল-ফিলিস্তিন সংকট, ইসরাইল-আরব সংকট, ইসরাইল-ইরান সংকট, সিরিয়ার রাজনৈতিক প্রেক্ষাপট পরিবর্তন)"]]},{"i":"INT-10","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-১০","sn":"আন্তর্জাতিক","u":[["INT-10-01","T","","আন্তঃরাষ্ট্রীয় নিরাপত্তা: আন্তর্জাতিক সম্পর্ক, আন্তর্জাতিক নিরাপত্তা ও নিরস্ত্রীকরণ, যৌথ নিরাপত্তা ব্যবস্থা, শক্তিসাম্য ব্যবস্থা"],["INT-10-02","T","","সামরিক জোট: ন্যাটো (NATO), ওয়ারশ ও আনজুস, কোয়াড, অকাস, সিয়েটো, সেন্টো"],["INT-10-03","T","","শক্তি ও নিরাপত্তা: জাতীয় শক্তি, শক্তিসাম্য, নিরস্ত্রীকরণ ও অস্ত্র-নিয়ন্ত্রণ, সন্ত্রাসবাদ"]]},{"i":"INT-11","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-১১","sn":"আন্তর্জাতিক","u":[["INT-11-01","T","","আন্তর্জাতিক সেবা সংস্থা: Red Cross, রোটারি ইন্টারন্যাশনাল, অক্সফাম (OXFAM), অন্যান্য সেবা সংস্থা (CARE, USAID, অরবিস, SCOUT, SOS, লায়ন্স ক্লাব)"],["INT-11-02","T","","আন্তর্জাতিক মানবাধিকার সংস্থা: Amnesty International, TI (ট্রান্সপারেন্সি ইন্টারন্যাশনাল), হিউম্যান রাইটস ওয়াচ (Human Rights Watch)"],["INT-11-03","T","","আন্তর্জাতিক পুলিশ, গোয়েন্দা ও গেরিলা সংস্থা"],["INT-11-04","T","","অস্ত্র নিয়ন্ত্রণ ও নিরস্ত্রীকরণ চুক্তি: অস্ত্র নিয়ন্ত্রণ সংস্থা (IAEA, OPCW, WMD), নিরস্ত্রীকরণ চুক্তিসমূহ"],["INT-11-05","T","","আন্তর্জাতিক বিচার আদালত এবং নারীর ক্ষমতায়ন"]]},{"i":"INT-12","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-১২","sn":"আন্তর্জাতিক","u":[["INT-12-01","T","","আন্তর্জাতিক পরিবেশগত ইস্যু ও কূটনীতি: পরিবেশ, বাস্তুসংস্থান, জলবায়ু ও বৈশ্বিক উষ্ণায়ন"],["INT-12-02","T","","পরিবেশ বিষয়ক সংস্থা, পরিবেশ বিষয়ক সম্মেলন, পরিবেশ বিষয়ক চুক্তি ও প্রটোকল, আবহাওয়া বিষয়ক কনভেনশন, পরিবেশ সংক্রান্ত দিবসসমূহ"],["INT-12-03","T","","প্রধান ধারণা ও মতবাদ, বৈশ্বিক পরিবেশ ও জলবায়ু কূটনীতি এবং পরিবেশগত এজেন্ডা"]]},{"i":"INT-13","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-১৩","sn":"আন্তর্জাতিক","u":[["INT-13-01","T","","ভৌগোলিক পরিচিতি: মহাসাগর, সাগর, উপসাগর ও সমুদ্রবন্দর, বিশ্বের বিভিন্ন নদীসমূহ ও নদী তীরবর্তী শহর"],["INT-13-02","T","","ভৌগোলিক সীমারেখা, প্রণালি, খাল, চ্যানেল ও অন্তরীপ"],["INT-13-03","T","","বিশ্বের উল্লেখযোগ্য দ্বীপ, উপদ্বীপ ও হ্রদসমূহ, বিশ্বের ভূমিরূপ ও জলপ্রপাত"],["INT-13-04","T","","বিখ্যাত স্কয়ার, ট্রায়াঙ্গল ও সার্কেল, বিশেষায়িত রাষ্ট্রসমূহ"]]},{"i":"INT-14","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-১৪","sn":"আন্তর্জাতিক","u":[["INT-14-01","T","","আন্তর্জাতিক সম্পর্ক ও আন্তর্জাতিক রাজনীতির সংযোগ ও সম্পর্ক"],["INT-14-02","T","","বিশ্বায়ন ও নয়া বিশ্বব্যবস্থা"],["INT-14-03","T","","বিবিধ: খেলাধুলা, নোবেল পুরস্কার, গুরুত্বপূর্ণ দিবসসমূহ, বিমানবন্দর, বিমানসংস্থা, সংবাদপত্র ও সংবাদসংস্থা, বিশ্বমঞ্চে নারী"]]},{"i":"INT-15","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-১৫","sn":"আন্তর্জাতিক","u":[["INT-15-01","T","","আন্তর্জাতিক অঙ্গনে বাংলাদেশ: বড় অর্জন, চ্যালেঞ্জ ও ভবিষ্যৎ দিকনির্দেশনা (১৯৭১-২০২৫), বাংলাদেশের বৈদেশিক নীতি"],["INT-15-02","T","","সমস্যা সমাধান: দ্বিপাক্ষিক, বহুপাক্ষিক, Land Boundary, অর্থনৈতিক ও গুরুত্বপূর্ণ চুক্তি"]]},{"i":"INT-16","f":"s4","l":"আন্তর্জাতিক বিষয়াবলি — লেকচার-১৬","sn":"আন্তর্জাতিক","u":[["INT-16-01","T","","বিশ্বের সাম্প্রতিক ও চলমান ঘটনাপ্রবাহ (সংগঠন, বিভিন্ন সূচক, সম্মেলন ইত্যাদি)"],["INT-16-02","T","","বৈদেশিক নীতি ও কূটনীতি (ধারণা, সিদ্ধান্ত গ্রহণ প্রক্রিয়া, কার্যাবলি, কূটনীতিকদের অব্যাহতি ও দায়মুক্তি)"]]},{"i":"GEO-01","f":"s5","l":"ভূগোল — লেকচার-০১","sn":"ভূগোল","u":[["GEO-01-01","T","","মহাবিশ্ব"],["GEO-01-02","T","","পৃথিবী"],["GEO-01-03","T","","পৃথিবীর ভূমিরূপ"],["GEO-01-04","T","","মহাদেশসমূহ"],["GEO-01-05","T","","পৃথিবীর ভূ-সম্পদ"]]},{"i":"GEO-02","f":"s5","l":"ভূগোল — লেকচার-০২","sn":"ভূগোল","u":[["GEO-02-01","T","","পৃথিবীর জলসম্পদ"],["GEO-02-02","T","","জলবায়ু"],["GEO-02-03","T","","বিশ্ব উষ্ণায়ন ও জলবায়ু পরিবর্তন"],["GEO-02-04","T","","বাংলাদেশের জলবায়ু"],["GEO-02-05","T","","জলবায়ু সুরক্ষায় আন্তর্জাতিক উদ্যোগ"]]},{"i":"GEO-03","f":"s5","l":"ভূগোল — লেকচার-০৩","sn":"ভূগোল","u":[["GEO-03-01","T","","ভূ-রাজনৈতিক বিরোধের আঙ্গিক"],["GEO-03-02","T","","দুর্যোগ"],["GEO-03-03","T","","বাংলাদেশের প্রাকৃতিক দুর্যোগ ও পরিবেশ দূষণ"],["GEO-03-04","T","","দুর্যোগ ব্যবস্থাপনা"]]},{"i":"GEO-04","f":"s5","l":"ভূগোল — লেকচার-০৪","sn":"ভূগোল","u":[["GEO-04-01","T","","মানচিত্র পাঠ ও ব্যবহার"],["GEO-04-02","T","","পৃথিবীর অভ্যন্তরীণ ও বাহ্যিক গঠন"],["GEO-04-03","T","","বায়ুমণ্ডল"],["GEO-04-04","T","","বারিমণ্ডল"]]},{"i":"SCI-01","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-০১","sn":"বিজ্ঞান","u":[["SCI-01-01","T","","আলো: বর্ণালি, বিভিন্ন বর্ণ এবং তরঙ্গদৈর্ঘ্য, লেজার রশ্মি"],["SCI-01-02","T","","আলোর প্রতিফলন, আলোর প্রতিসরণ, আলোর পূর্ণ অভ্যন্তরীণ প্রতিফলন, পাতলা অভিসারী লেন্স"],["SCI-01-03","T","","আলোর বিচ্ছুরণ, আলোর কণা ধর্ম, আইনস্টাইনের আলোক-বৈদ্যুতিক সমীকরণ, ফটোসেল (আলোক কোষ)"],["SCI-01-04","T","","বিভিন্ন আলোকীয় ঘটনা, আলোক যন্ত্র, শক্তিশালী আলোকরশ্মি"]]},{"i":"SCI-02","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-০২","sn":"বিজ্ঞান","u":[["SCI-02-01","T","","তরঙ্গ, শব্দ, টানা তারে স্থির তরঙ্গের উৎপত্তি, আড় কম্পনের সূত্র"],["SCI-02-02","T","","ডপলার ক্রিয়া ও ডপলার ক্রিয়ার প্রয়োগ এবং সীমাবদ্ধতা, প্রতিধ্বনি, শব্দতরঙ্গের শোষণ, শব্দের ব্যবহার"]]},{"i":"SCI-03","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-০৩","sn":"বিজ্ঞান","u":[["SCI-03-01","T","","মৌলিক কণা, পরমাণু ও অণু, পরমাণুর মডেল"],["SCI-03-02","T","","ওহমের সূত্র, বৈদ্যুতিক ক্ষমতা ও শক্তি, তড়িৎচৌম্বক আবেশ ও কার্শফের ভোল্টেজ সূত্র"],["SCI-03-03","T","","শ্রেণিবর্তনী, তড়িৎ শক্তি, তড়িৎ কোষ, বৈদ্যুতিক যন্ত্র (ইলেকট্রিক্যাল পার্ট)"]]},{"i":"SCI-04","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-০৪","sn":"বিজ্ঞান","u":[["SCI-04-01","T","","তেজস্ক্রিয়তা, ইলেকট্রনিক্স, অর্ধপরিবাহী, অ্যামপ্লিফায়ার ও ওসিলেটর"],["SCI-04-02","T","","রোধ, রোধকের প্রকারভেদ, পরিবাহিতা, ওহম মিটার, ধারকত্ব, ধারক"],["SCI-04-03","T","","মৌলিক আরএলসি বর্তনীর প্রতিক্রিয়া, সাইনুসয়ডাল ভোল্টেজ অথবা বিদ্যুৎ প্রবাহের উপাদান (ইলেকট্রিক্যাল পার্ট)"]]},{"i":"SCI-05","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-০৫","sn":"বিজ্ঞান","u":[["SCI-05-01","T","","চুম্বক ও চৌম্বকত্ব, ভূ-চুম্বক, চুম্বকের উপর তড়িৎ প্রবাহের ক্রিয়া, বিদ্যুৎ প্রবাহের চৌম্বকক্ষেত্রের সম্পর্ক"],["SCI-05-02","T","","চৌম্বকক্ষেত্রে একটি দণ্ড চুম্বকের ওপর ক্রিয়ারত টর্ক, দণ্ড চুম্বক হিসেবে পৃথিবীর চৌম্বকক্ষেত্র, ট্যানজেন্ট গ্যালভানোমিটার, কম্পন, চুম্বকমান যন্ত্র"],["SCI-05-03","T","","ডায়াচৌম্বক পদার্থ, প্যারাচৌম্বক পদার্থ, ফেরোচৌম্বক পদার্থ, তাড়িতচুম্বক এবং স্থায়ী চুম্বক"]]},{"i":"SCI-06","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-০৬","sn":"বিজ্ঞান","u":[["SCI-06-01","T","","পানি: পানির ধর্ম, পানির গলনাঙ্ক ও স্ফুটনাঙ্ক, তড়িৎ পরিবাহিতা, পানির গঠন, হাইড্রোজেন বন্ধন"],["SCI-06-02","T","","পানির মানদণ্ড, পানির উৎস, মিঠা ও দূষিত পানি, পানির দূষণ প্রতিরোধের কৌশল"],["SCI-06-03","T","","অ্যাসিড, ক্ষারক ও লবণ, পাকস্থলীতে অ্যাসিডিটির কারণ এবং সঠিক খাদ্য নির্বাচন"],["SCI-06-04","T","","pH, বস্তুর pH-এর পরিমাপ এবং গুরুত্ব"],["SCI-06-05","T","","লবণ, লবণের বৈশিষ্ট্য, প্রাত্যহিক জীবনে লবণের প্রয়োজনীয়তা"]]},{"i":"SCI-07","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-০৭","sn":"বিজ্ঞান","u":[["SCI-07-01","T","","বায়ুমণ্ডল, বায়ুপ্রবাহ, জীবমণ্ডল ও বারিমণ্ডল, আয়নমণ্ডল, অক্সিজেন, কার্বন-ডাই-অক্সাইড ও নাইট্রোজেনের ভূমিকা"],["SCI-07-02","T","","পাস্তুরাইজেশন, জোয়ার-ভাটা (টাইড), মাটি, মানব ব্যবহার্য খনিজ, শক্তির বিভিন্ন উৎস"]]},{"i":"SCI-08","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-০৮","sn":"বিজ্ঞান","u":[["SCI-08-01","T","","পরিষ্কারক দ্রব্য, গৃহস্থালি ও কৃষি দ্রব্য, ধাতব যৌগ, অধাতব পদার্থ, নিষ্ক্রিয় গ্যাসসমূহ, অবস্থানান্তর মৌল"],["SCI-08-02","T","","জৈব যৌগ, কার্বন, পলিমার, পলিমারকরণ প্রক্রিয়া, উৎস, প্রাকৃতিক ও কৃত্রিম পলিমারের বৈশিষ্ট্য ও ব্যবহার, ক্রোমাট্রোগ্রাফি"]]},{"i":"SCI-09","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-০৯","sn":"বিজ্ঞান","u":[["SCI-09-01","T","","ভৌত রাশি ও পরিমাপ, ভৌত বিজ্ঞানের উন্নয়ন, বলবিদ্যার বিবিধ সংজ্ঞা"],["SCI-09-02","T","","তাপ, পদার্থের উপর তাপের প্রভাব, তাপ ইঞ্জিন"],["SCI-09-03","T","","তড়িৎ রসায়ন, তড়িৎ রাসায়নিক কোষ, পদার্থের ক্ষয়"]]},{"i":"SCI-10","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-১০","sn":"বিজ্ঞান","u":[["SCI-10-01","T","","আপেক্ষিকতা তত্ত্ব"],["SCI-10-02","T","","বিশ্বতত্ত্ব"],["SCI-10-03","T","","জ্যোতির্বিজ্ঞান"]]},{"i":"SCI-11","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-১১","sn":"বিজ্ঞান","u":[["SCI-11-01","T","","জীববিজ্ঞান, জীববৈচিত্র্য, প্রাণিবৈচিত্র্য, কোষ, টিস্যু"],["SCI-11-02","T","","জৈবপ্রযুক্তি: ক্রোমোসোম, DNA, RNA, ফরেনসিক টেস্ট, মানুষের জেনেটিক বিশৃঙ্খলা"],["SCI-11-03","T","","জীবপ্রযুক্তি ও জিন প্রকৌশল, ক্লোন, ক্লোনিংয়ের সামাজিক প্রভাব"]]},{"i":"SCI-12","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-১২","sn":"বিজ্ঞান","u":[["SCI-12-01","T","","উদ্ভিদের অঙ্গসংস্থান, উদ্ভিদের শারীরবৃত্তীয় কাজ, প্ল্যান্ট নিউট্রিশন, উদ্ভিদবৈচিত্র্য"],["SCI-12-02","T","","অণুজীব, ভাইরাস, ব্যাকটেরিয়া, ম্যালেরিয়া জীবাণু"],["SCI-12-03","T","","অ্যান্টিসেপটিক, অ্যান্টিবায়োটিক"]]},{"i":"SCI-13","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-১৩","sn":"বিজ্ঞান","u":[["SCI-13-01","T","","খাদ্য ও পুষ্টি: কার্বোহাইড্রেট, আমিষ, চর্বি ও লিপিড, ভিটামিন"],["SCI-13-02","T","","কার্বোহাইড্রেট ও প্রোটিনের প্রকারভেদ এবং উৎস, পুষ্টিগুণ, সুষম খাদ্যের তালিকা, সুষম খাদ্যের পিরামিড, বডি মাস ইনডেক্স (BMI)"],["SCI-13-03","T","","ফাস্টফুড অথবা জাংকফুড, খাদ্য সংরক্ষণের বিভিন্ন প্রক্রিয়া, খাদ্য সংরক্ষণে রাসায়নিকের ব্যবহার এবং তার শারীরিক প্রভাব"]]},{"i":"SCI-14","f":"s6","l":"সাধারণ বিজ্ঞান — লেকচার-১৪","sn":"বিজ্ঞান","u":[["SCI-14-01","T","","অর্গান ও অর্গান সিস্টেম, শ্বসনতন্ত্র, রক্ত সংবহনতন্ত্র, পরিপাকতন্ত্র, রেচনতন্ত্র, স্নায়ুতন্ত্র, কঙ্কালতন্ত্র, অন্তঃক্ষরা গ্রন্থিতন্ত্র, প্রজননতন্ত্র"],["SCI-14-02","T","","মা ও শিশু স্বাস্থ্য"],["SCI-14-03","T","","রোগ ও স্বাস্থ্যসেবা: স্ট্রোক, হার্ট অ্যাটাক, রক্তচাপ, উচ্চরক্তচাপ ও ডায়াবেটিস, ডেঙ্গু, ডায়রিয়া, মাদকাসক্তি, ভ্যাকসিনেশন, চোখের ত্রুটি, খাদ্যের বিষক্রিয়া, এক্সরে"]]},{"i":"ICT-01","f":"s7","l":"কম্পিউটার ও তথ্যপ্রযুক্তি — লেকচার-০১","sn":"কম্পিউটার","u":[["ICT-01-01","T","","কম্পিউটারের প্রাথমিক ধারণা ও ইতিহাস (প্রাথমিক ধারণা, পারঙ্গমতা, ইতিহাস)"],["ICT-01-02","T","","কম্পিউটারের প্রকারভেদ (শ্রেণিবিভাগ, প্রজন্ম)"],["ICT-01-03","T","","দৈনন্দিন জীবনে কম্পিউটার (ই-মেইল, সোশ্যাল মিডিয়া (ফেসবুক, টুইটার, ব্লগ), মাল্টিমিডিয়া)"],["ICT-01-04","T","","তথ্য প্রযুক্তির বিভিন্ন ক্ষেত্রসমূহ (কৃত্রিম বুদ্ধিমত্তা, রোবটিক্স, সাইবার ক্রাইম)"]]},{"i":"ICT-02","f":"s7","l":"কম্পিউটার ও তথ্যপ্রযুক্তি — লেকচার-০২","sn":"কম্পিউটার","u":[["ICT-02-01","T","","কেন্দ্রীয় প্রক্রিয়াকরণ ইউনিট, মাইক্রোপ্রসেসর, কম্পিউটারের স্মৃতি এবং এদের প্রকারভেদ ও বৈশিষ্ট্য"],["ICT-02-02","T","","ইনপুট ও আউটপুট ডিভাইস"],["ICT-02-03","T","","মাইক্রোপ্রসেসরের কার্যপ্রণালি ও সংগঠন, অ্যারিথমেটিক লজিক ইউনিট, কন্ট্রোল ইউনিট"]]},{"i":"ICT-03","f":"s7","l":"কম্পিউটার ও তথ্যপ্রযুক্তি — লেকচার-০৩","sn":"কম্পিউটার","u":[["ICT-03-01","T","","কম্পিউটার নাম্বার সিস্টেম: সংখ্যা পদ্ধতি"],["ICT-03-02","T","","কম্পিউটার নাম্বার সিস্টেম: বুলিয়ান অ্যালজেবরা"],["ICT-03-03","T","","লজিক গেইট"]]},{"i":"ICT-04","f":"s7","l":"কম্পিউটার ও তথ্যপ্রযুক্তি — লেকচার-০৪","sn":"কম্পিউটার","u":[["ICT-04-01","T","","কম্পিউটার প্রোগ্রামিং ও সফটওয়্যার (প্রোগ্রামিং ও কোডিং, প্রোগ্রামিং ভাষা, অনুবাদক প্রোগ্রাম, সফটওয়্যার উন্নয়নের ধাপসমূহ, সফটওয়্যারের শ্রেণিবিভাগ)"],["ICT-04-02","T","","অপারেটিং সিস্টেমের ইতিহাস, অপারেটিং সিস্টেমের প্রকারভেদ, ফার্মওয়্যার, BIOS, Booting"],["ICT-04-03","T","","ওয়ার্ড প্রসেসিং সফটওয়্যার ও অফিস স্যুট"],["ICT-04-04","T","","কম্পিউটার ভাইরাস"]]},{"i":"ICT-05","f":"s7","l":"কম্পিউটার ও তথ্যপ্রযুক্তি — লেকচার-০৫","sn":"কম্পিউটার","u":[["ICT-05-01","T","","ডেটা ও নেটওয়ার্ক (বিশ্বগ্রাম, ডেটা কমিউনিকেশন, ডেটা ট্রান্সমিশন মোড, হটস্পট)"],["ICT-05-02","T","","কম্পিউটার নেটওয়ার্ক (নেটওয়ার্ক টপোলজি, কম্পিউটার নেটওয়ার্কের শ্রেণিবিভাগ, নেটওয়ার্কিং ডিভাইস)"],["ICT-05-03","T","","ডেটাবেজ সিস্টেম (ডেটার প্রকারভেদ, ডেটাবেজের প্রকারভেদ, কিছু জনপ্রিয় ডেটাবেজ ম্যানেজমেন্ট সফটওয়্যার, ফাইল এক্সটেনশন)"]]},{"i":"ICT-06","f":"s7","l":"কম্পিউটার ও তথ্যপ্রযুক্তি — লেকচার-০৬","sn":"কম্পিউটার","u":[["ICT-06-01","T","","সেলুলার ডেটা নেটওয়ার্ক ও মোবাইল প্রযুক্তি বৈশিষ্ট্যসমূহ (মোবাইল প্রযুক্তি)"],["ICT-06-02","T","","ইন্টারনেট, ক্লায়েন্ট সার্ভার ম্যানেজমেন্ট ও ক্লাউড কম্পিউটিং (ইন্টারনেটের ইতিহাস, বিভিন্ন প্রোটোকল, সার্ফা, ক্লাউড কম্পিউটিং)"],["ICT-06-03","T","","ওয়েবসাইটসমূহ, অ্যাকসেস কন্ট্রোল সিকিউরিটি ও প্রাইভেসি"],["ICT-06-04","T","","মোবাইল টেলিফোন সিস্টেম, স্যাটেলাইট কমিউনিকেশন সিস্টেম ও VSAT, অপটিক্যাল ফাইবার কমিউনিকেশনের গুরুত্ব, ওয়াই-ফাই, ই-কমার্স"],["ICT-06-05","T","","তথ্য প্রযুক্তির বড় বড় প্রতিষ্ঠান ও তাদের সেবাসমূহ (প্রযুক্তি বিশ্বের বড় বড় প্রতিষ্ঠানসমূহ)"]]},{"i":"MTH-01","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-০১","sn":"গণিত","u":[["MTH-01-01","T","","বাস্তব সংখ্যা ও জটিল সংখ্যা"],["MTH-01-02","T","","ল.সা.গু ও গ.সা.গু"]]},{"i":"MTH-02","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-০২","sn":"গণিত","u":[["MTH-02-01","T","","ভগ্নাংশ"],["MTH-02-02","T","","অনুপাত ও সমানুপাত"],["MTH-02-03","T","","শতকরা"]]},{"i":"MTH-03","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-০৩","sn":"গণিত","u":[["MTH-03-01","T","","ঐকিক নিয়ম"],["MTH-03-02","T","","লাভ-ক্ষতি"]]},{"i":"MTH-04","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-০৪","sn":"গণিত","u":[["MTH-04-01","T","","পাটিগাণিতিক সরলীকরণ"],["MTH-04-02","T","","সরল ও যৌগিক মুনাফা"]]},{"i":"MTH-05","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-০৫","sn":"গণিত","u":[["MTH-05-01","T","","বীজগাণিতিক সূত্রাবলি"],["MTH-05-02","T","","বীজগাণিতিক সরলীকরণ"]]},{"i":"MTH-06","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-০৬","sn":"গণিত","u":[["MTH-06-01","T","","সরল সহসমীকরণ"],["MTH-06-02","T","","সরল ও দ্বিপদী সমীকরণ"],["MTH-06-03","T","","দ্বিঘাত সমীকরণ"],["MTH-06-04","T","","দুই ও তিন চলকবিশিষ্ট সমীকরণ"]]},{"i":"MTH-07","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-০৭","sn":"গণিত","u":[["MTH-07-01","T","","উৎপাদকে বিশ্লেষণ"],["MTH-07-02","T","","দ্বিপদী বিস্তৃতি"],["MTH-07-03","T","","অসমতা"]]},{"i":"MTH-08","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-০৮","sn":"গণিত","u":[["MTH-08-01","T","","অনুক্রম"],["MTH-08-02","T","","সমান্তর ও গুণোত্তর ধারা"]]},{"i":"MTH-09","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-০৯","sn":"গণিত","u":[["MTH-09-01","T","","সূচক"],["MTH-09-02","T","","লগারিদম এবং তাদের ফাংশনসমূহ"]]},{"i":"MTH-10","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-১০","sn":"গণিত","u":[["MTH-10-01","T","","বিন্যাস"],["MTH-10-02","T","","সমাবেশ"]]},{"i":"MTH-11","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-১১","sn":"গণিত","u":[["MTH-11-01","T","","সেট তত্ত্ব ও ভেনচিত্র"],["MTH-11-02","T","","সম্ভাব্যতা"]]},{"i":"MTH-12","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-১২","sn":"গণিত","u":[["MTH-12-01","T","","স্থানাঙ্ক জ্যামিতি"],["MTH-12-02","T","","পরিসংখ্যান"]]},{"i":"MTH-13","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-১৩","sn":"গণিত","u":[["MTH-13-01","T","","ত্রিকোণমিতিক অনুপাত"],["MTH-13-02","T","","ত্রিকোণমিতির সাহায্যে দূরত্ব ও উচ্চতা নির্ণয়"]]},{"i":"MTH-14","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-১৪","sn":"গণিত","u":[["MTH-14-01","T","","পরিমিতি: সমতল ও ক্ষেত্রফল সংক্রান্ত সমস্যার সমাধান"]]},{"i":"MTH-15","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-১৫","sn":"গণিত","u":[["MTH-15-01","T","","রেখা, কোণ, ত্রিভুজ সংক্রান্ত উপপাদ্য"],["MTH-15-02","T","","পিথাগোরাসের উপপাদ্য"]]},{"i":"MTH-16","f":"s8","l":"গাণিতিক যুক্তি — লেকচার-১৬","sn":"গণিত","u":[["MTH-16-01","T","","বৃত্ত ও চতুর্ভুজ সংক্রান্ত উপপাদ্য"]]},{"i":"MNT-01","f":"s9","l":"মানসিক দক্ষতা — লেকচার-০১","sn":"মানসিক","u":[["MNT-01-01","T","","যান্ত্রিক দক্ষতা: দর্পণ ও পানিতে প্রতিবিম্ব"],["MNT-01-02","T","","যান্ত্রিক দক্ষতা: বল বিভাজন নীতি"],["MNT-01-03","T","","যান্ত্রিক দক্ষতা: সরল যন্ত্র ও জটিল যন্ত্র"],["MNT-01-04","T","","যান্ত্রিক দক্ষতা: যন্ত্রাংশ ও সরঞ্জাম"]]},{"i":"MNT-02","f":"s9","l":"মানসিক দক্ষতা — লেকচার-০২","sn":"মানসিক","u":[["MNT-02-01","T","","স্থানাঙ্ক সম্পর্ক: স্থানাঙ্ক ব্যবস্থা"],["MNT-02-02","T","","স্থানাঙ্ক সম্পর্ক: চিত্র গণনা ও প্রাসঙ্গিক চিত্র বাছাই"]]},{"i":"MNT-03","f":"s9","l":"মানসিক দক্ষতা — লেকচার-০৩","sn":"মানসিক","u":[["MNT-03-01","T","","সংখ্যাগত ক্ষমতা: অনুক্রম সম্পর্কিত সমস্যা, ধারার সমষ্টি নির্ণয়"],["MNT-03-02","T","","সংখ্যাগত ক্ষমতা: চিত্রে প্রদত্ত সংখ্যার যৌক্তিক অবস্থান নির্ণয়"],["MNT-03-03","T","","সংখ্যাগত ক্ষমতা: ভগ্নাংশ ও দশমিক সংখ্যার সমস্যাবলি, ভগ্নাংশ ও অনুপাত"],["MNT-03-04","T","","সংখ্যাগত ক্ষমতা: বর্গমূল ও ঘনমূল নির্ণয়, সংখ্যার ধারণা"],["MNT-03-05","T","","সংখ্যাগত ক্ষমতা: সমীকরণ সম্পর্কিত সমস্যাবলি"]]},{"i":"MNT-04","f":"s9","l":"মানসিক দক্ষতা — লেকচার-০৪","sn":"মানসিক","u":[["MNT-04-01","T","","ভাষাগত যৌক্তিক বিচার: সাংকেতিক বিন্যাস, শব্দ ও বাক্য গঠন"],["MNT-04-02","T","","ভাষাগত যৌক্তিক বিচার: ভাবার্থ অনুধাবন ও সঠিক শব্দ"],["MNT-04-03","T","","ভাষাগত যৌক্তিক বিচার: সাদৃশ্য ও বৈসাদৃশ্য বিচার, রক্তের সম্পর্ক ও বিশেষত্ব নির্ণয়"],["MNT-04-04","T","","ভাষাগত যৌক্তিক বিচার: সিদ্ধান্ত গ্রহণ ও বিচার দক্ষতা"],["MNT-04-05","T","","বানান ও ভাষা: আধুনিক বাংলা বানানের নিয়ম ও বানান শনাক্তকরণ"],["MNT-04-06","T","","বানান ও ভাষা: Spelling ও বাক্য প্রকরণ"],["MNT-04-07","T","","বানান ও ভাষা: সমার্থক ও বিপরীতার্থক শব্দ, Synonyms and Antonyms"]]},{"i":"MNT-05","f":"s9","l":"মানসিক দক্ষতা — লেকচার-০৫","sn":"মানসিক","u":[["MNT-05-01","T","","সমস্যা সমাধান: ঘড়ি বিষয়ক অভীক্ষা"],["MNT-05-02","T","","সমস্যা সমাধান: বার ও তারিখ নির্ণয়"],["MNT-05-03","T","","সমস্যা সমাধান: নৌকা ও স্রোত বিষয়ক সমস্যা"],["MNT-05-04","T","","সমস্যা সমাধান: নল ও চৌবাচ্চা বিষয়ক সমস্যা"],["MNT-05-05","T","","সমস্যা সমাধান: সময় ও কাজ বিষয়ক সমস্যা"],["MNT-05-06","T","","সমস্যা সমাধান: শতকরা ও ঐকিক, জ্যামিতিক সমস্যা"]]},{"i":"ETH-01","f":"s10","l":"নৈতিকতা, মূল্যবোধ ও সু-শাসন — লেকচার-০১","sn":"নৈতিকতা","u":[["ETH-01-01","T","","নৈতিকতা, মূল্যবোধ শিক্ষা ও সুশাসনের সংজ্ঞা"],["ETH-01-02","T","","মূল্যবোধ শিক্ষা ও সুশাসনের সম্পর্ক"],["ETH-01-03","T","","মূল্যবোধ শিক্ষা এবং সুশাসনের সাধারণ ধারণা"],["ETH-01-04","T","","সমাজ ও জাতীয় আদর্শ গঠন এবং ব্যক্তির নাগরিক জীবনে মূল্যবোধ শিক্ষা ও সুশাসনের গুরুত্ব"],["ETH-01-05","T","","সমাজে মূল্যবোধ শিক্ষা ও সুশাসনের উপযোগিতা এবং এদের অভাবজনিত প্রভাব"]]},{"i":"ETH-02","f":"s10","l":"নৈতিকতা, মূল্যবোধ ও সু-শাসন — লেকচার-০২","sn":"নৈতিকতা","u":[["ETH-02-01","T","","জাতীয় উন্নয়নে মূল্যবোধ শিক্ষা ও সুশাসনের প্রভাব"],["ETH-02-02","T","","সমাজে মূল্যবোধ শিক্ষা ও সুশাসনের উপাদানগুলোর প্রতিষ্ঠা"],["ETH-02-03","T","","গুরুত্বপূর্ণ দার্শনিকদের জীবনকথা, গুরুত্বপূর্ণ গ্রন্থসমূহের তালিকা"],["ETH-02-04","T","","নৈতিকতা, মূল্যবোধ ও সুশাসন সম্পর্কিত সংবিধানের অনুচ্ছেদসমূহ"],["ETH-02-05","T","","সংস্কৃতির ধারণা ও উপাদান"]]},{"i":"ETH-03","f":"s10","l":"নৈতিকতা, মূল্যবোধ ও সু-শাসন — লেকচার-০৩","sn":"নৈতিকতা","u":[["ETH-03-01","T","","আইনের ধারণা ও সংজ্ঞা, স্বাধীনতা, সাম্য"],["ETH-03-02","T","","চাপ সৃষ্টিকারী গোষ্ঠী, সুশাসন ও চাপসৃষ্টিকারী গোষ্ঠী"],["ETH-03-03","T","","নেতৃত্বের ধারণা ও সংজ্ঞা, সুশাসন প্রতিষ্ঠায় নেতৃত্বের ভূমিকা"]]},{"i":"ETH-04","f":"s10","l":"নৈতিকতা, মূল্যবোধ ও সু-শাসন — লেকচার-০৪","sn":"নৈতিকতা","u":[["ETH-04-01","T","","গণতন্ত্র, প্রজাতন্ত্র, একনায়কতন্ত্র"],["ETH-04-02","T","","জনমতের ধারণা ও সংজ্ঞা"],["ETH-04-03","T","","আমলাতন্ত্রের ধারণা, সংজ্ঞা ও প্রকৃতি"]]},{"i":"WLV-01","f":"WLV","l":"লিখিত লাইভ ক্লাস — লেকচার-০১","sn":"বাংলা","u":[["WLV-01-01","T","","গ্রন্থ সমালোচনা লেখার কৌশল"],["WLV-01-02","T","","গুরুত্বপূর্ণ কিছু গ্রন্থের সমালোচনা: বাঙালির ইতিহাস কিংবা লোক ঐতিহ্য নির্ভর গ্রন্থের সমালোচনা"],["WLV-01-03","T","","গুরুত্বপূর্ণ কিছু গ্রন্থের সমালোচনা: ভাষা আন্দোলনের পটভূমিতে রচিত গ্রন্থের সমালোচনা"],["WLV-01-04","T","","গুরুত্বপূর্ণ কিছু গ্রন্থের সমালোচনা: উনসত্তরের গণঅভ্যুত্থানের পটভূমিতে রচিত গ্রন্থের সমালোচনা"]]},{"i":"WLV-02","f":"WLV","l":"লিখিত লাইভ ক্লাস — লেকচার-০২","sn":"বাংলা","u":[["WLV-02-01","T","","সারাংশ/সারমর্ম লেখার কৌশল"],["WLV-02-02","T","","গুরুত্বপূর্ণ কিছু সারাংশ/সারমর্ম নিয়ে আলোচনা"]]},{"i":"WLV-03","f":"WLV","l":"লিখিত লাইভ ক্লাস — লেকচার-০৩","sn":"ইংরেজি","u":[["WLV-03-01","T","","Reading Comprehension: Introduction to Reading Strategies"],["WLV-03-02","T","","Reading Comprehension: Guessing the meaning of the word"],["WLV-03-03","T","","Reading Comprehension: Paraphrasing"]]},{"i":"WLV-04","f":"WLV","l":"লিখিত লাইভ ক্লাস — লেকচার-০৪","sn":"ইংরেজি","u":[["WLV-04-01","T","","Reading Comprehension: Framing the Summary"],["WLV-04-02","T","","Reading Comprehension: writing a feature"]]},{"i":"WLV-05","f":"WLV","l":"লিখিত লাইভ ক্লাস — লেকচার-০৫","sn":"আন্তর্জাতিক","u":[["WLV-05-01","T","","আন্তর্জাতিক বিষয়াবলি (প্রবলেম সলভিং)"]]},{"i":"REC-01","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-০১","sn":"বাংলা","u":[["REC-01-01","T","","ভাব-সম্প্রসারণ লেখার কৌশল"],["REC-01-02","T","","গুরুত্বপূর্ণ কিছু ভাব-সম্প্রসারণ নিয়ে আলোচনা"]]},{"i":"REC-03","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-০৩","sn":"বাংলা","u":[["REC-03-01","T","","পত্র/প্রতিবেদন লেখার কৌশল"],["REC-03-02","T","","কাল্পনিক সংলাপ লেখার কৌশল"],["REC-03-03","T","","গুরুত্বপূর্ণ কিছু পত্র/প্রতিবেদন ও কাল্পনিক সংলাপ নিয়ে আলোচনা"]]},{"i":"REC-05","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-০৫","sn":"বাংলা","u":[["REC-05-01","T","","গ্রন্থ সমালোচনা লেখার কৌশল"],["REC-05-02","T","","গুরুত্বপূর্ণ কিছু গ্রন্থের সমালোচনা: বাংলাদেশের মুক্তিযুদ্ধকেন্দ্রিক গ্রন্থের সমালোচনা"],["REC-05-03","T","","গুরুত্বপূর্ণ কিছু গ্রন্থের সমালোচনা: বিভিন্ন উপন্যাস, গল্প, কবিতাগ্রন্থের সমালোচনা"]]},{"i":"REC-07","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-০৭","sn":"বাংলা","u":[["REC-07-01","T","","রচনা লেখার কৌশল: ভাষা আন্দোলন ও মুক্তিযুদ্ধ বিষয়ক"],["REC-07-02","T","","রচনা লেখার কৌশল: রাজনৈতিক, উন্নয়ন ও অর্থনৈতিক বিষয়ক"],["REC-07-03","T","","রচনা লেখার কৌশল: পরিবেশ ও সামাজিক বিষয়ক"]]},{"i":"REC-09","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-০৯","sn":"বাংলা","u":[["REC-09-01","T","","রচনা লেখার কৌশল: তথ্য ও প্রযুক্তি বিষয়ক শিক্ষা"],["REC-09-02","T","","রচনা লেখার কৌশল: সংস্কৃতি ও সাহিত্য বিষয়ক"],["REC-09-03","T","","রচনা লেখার কৌশল: সাম্প্রতিক ও বিবিধ"]]},{"i":"REC-02","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-০২","sn":"ইংরেজি","u":[["REC-02-01","T","","Reading Comprehension: Understanding Themes"],["REC-02-02","T","","Reading Comprehension: Answering the Thematic Questions"],["REC-02-03","T","","Reading Comprehension: Choosing the Title"]]},{"i":"REC-04","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-০৪","sn":"ইংরেজি","u":[["REC-04-01","T","","Reading Comprehension: Writing a letter to the editor"]]},{"i":"REC-06","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-০৬","sn":"ইংরেজি","u":[["REC-06-01","T","","Translation (English to Bangla)"]]},{"i":"REC-08","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-০৮","sn":"ইংরেজি","u":[["REC-08-01","T","","Translation (Bangla to English). (Part-01)"]]},{"i":"REC-10","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-১০","sn":"ইংরেজি","u":[["REC-10-01","T","","Translation (Bangla to English). (Part-02)"]]},{"i":"REC-12","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-১২","sn":"ইংরেজি","u":[["REC-12-01","T","","Essay Writing-01: How to write better, Constructing an Essay, A Brainstorming"],["REC-12-02","T","","Essay Writing-01: Parts of an Essay, why your Introduction and Conclusion Matter"],["REC-12-03","T","","Essay Writing-01: Constructing a Thesis Statement"],["REC-12-04","T","","Essay Writing-01: Narrative Writing, Descriptive Writing"],["REC-12-05","T","","Essay Writing-01: The Expository, The Argumentative, The Persuasive"]]},{"i":"REC-14","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-১৪","sn":"ইংরেজি","u":[["REC-14-01","T","","Essay Writing-02: Synthesis Essay, Documented Essay"],["REC-14-02","T","","Essay Writing-02: Avoiding Plagiarism, Common Mistakes in Writing"],["REC-14-03","T","","Essay Writing-02: Theoretical & Thematic Issues, Contemporary National & International Issues"],["REC-14-04","T","","Essay Writing-02: Written Hacks, Final Suggestions from Expert"]]},{"i":"REC-15","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-১৫","sn":"বাংলাদেশ","u":[["REC-15-01","T","","বর্তমানের আলোকে বাংলাদেশ বিষয়াবলি লিখিত পরীক্ষার প্রশ্ন নিয়ে আলোচনা"]]},{"i":"REC-11","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-১১","sn":"আন্তর্জাতিক","u":[["REC-11-01","T","","আন্তর্জাতিক বিষয়াবলি (কনসেপচুয়াল)"]]},{"i":"REC-13","f":"REC","l":"লিখিত ইন্টেন্সিভ ক্লাস (রেকর্ডেড) — লেকচার-১৩","sn":"আন্তর্জাতিক","u":[["REC-13-01","T","","আন্তর্জাতিক বিষয়াবলি (ইম্পেরিক্যাল)"]]}];
+const SUBJ=[{"k":"s1","bn":"বাংলা","en":"Bangla"},{"k":"s2","bn":"ইংরেজি","en":"English"},{"k":"s3","bn":"বাংলাদেশ","en":"Bangladesh Affairs"},{"k":"s4","bn":"আন্তর্জাতিক","en":"International Affairs"},{"k":"s5","bn":"ভূগোল","en":"Geography & Disaster"},{"k":"s6","bn":"বিজ্ঞান","en":"General Science"},{"k":"s7","bn":"কম্পিউটার","en":"ICT"},{"k":"s8","bn":"গণিত","en":"Math Reasoning"},{"k":"s9","bn":"মানসিক","en":"Mental Ability"},{"k":"s10","bn":"নৈতিকতা","en":"Ethics & Governance"},{"k":"WLV","bn":"লিখিত লাইভ","en":"Written live classes"},{"k":"REC","bn":"রেকর্ডেড","en":"Recorded intensive"}];
+const HUE={s1:155,s2:215,s3:12,s4:268,s5:95,s6:188,s7:238,s8:30,s9:322,s10:48,WLV:175,REC:345};
+const INT=[1,3,7,14,30];
+/* stages: 0 not started · 1 learned · 2 practiced */
+const ST=[{s:'○',sh:'Start'},{s:'◐',sh:'Learned'},{s:'✔',sh:'Practiced'}];
+const TYPE={T:'',H:'Homework',W:'Written'};
+const LEC=DATA, UNIT={}, LECOF={};
+const LECBY={};
+LEC.forEach(l=>{LECBY[l.i]=l;l.u.forEach(u=>{UNIT[u[0]]=u;LECOF[u[0]]=l})});
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hue=k=>HUE[k]??160;
+
+let S={w:{},s:{},d:[],k:{},t:0};
+const KEY='bcs-tracker-v1';
+let ref=null, saving=false, dirty=false, timer=null;
+let wkOff=0, sheetSlot=null, sheetF='all', sheetQ='';
+let tab='today', filt='all', q='', onlyOpen=false, open=new Set(), pick=null, focus='all', showAllDue=false;
+
+const iso=d=>{const x=new Date(d.getTime()-d.getTimezoneOffset()*60000);return x.toISOString().slice(0,10)};
+const today=()=>iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const daysBetween=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
+const fmt=s=>new Date(s+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+const U=id=>S.s[id]||[0,'',0];
+const dueOf=u=>(u[0]>=1&&u[2]<5&&u[1])?addDays(u[1],INT[u[2]]):null;
+
+function loadLocal(){try{const r=JSON.parse(localStorage.getItem(KEY)||'null');if(r&&r.s)return r}catch(e){}return null}
+function migrate(r){ /* older saves: v1 had Notes step, v2 had Mastered. Map to 0/1/2 */
+  const o={};
+  for(const id in r.s){const u=r.s[id].slice();let st=u[0];if(!r.v||r.v<2)st=st<=1?0:st-1;u[0]=Math.min(2,st);if(u[0]>0)o[id]=u}
+  return o}
+function adopt(r){if(r&&r.s&&(r.t||0)>=(S.t||0)){S={w:r.w||{},s:migrate(r),d:r.d||[],k:r.k||{},t:r.t||0}}}
+function touchDay(){const t=today();if(!S.d.includes(t)){S.d.push(t);S.d=S.d.slice(-90)}}
+function commit(){S.t=Date.now();touchDay();try{localStorage.setItem(KEY,JSON.stringify({v:3,...S}))}catch(e){}
+  dirty=true;clearTimeout(timer);timer=setTimeout(flush,700)}
+async function flush(){if(!ref||saving||!dirty)return;saving=true;dirty=false;
+  try{await ref.set({v:3,t:S.t,w:S.w,s:S.s,d:S.d,k:S.k||{}})}catch(e){}
+  saving=false;if(dirty)flush()}
+async function initStore(){
+  try{const c=window.claude;if(!c||!c.use)return;
+    const [db,user]=await Promise.all([c.use('db'),c.use('user')]);
+    if(!db||!user)return;const id=await user.id();if(!id)return;
+    ref=db.collection('data/users/'+id).doc('progress');
+    const snap=await ref.get();
+    if(snap.exists){adopt(snap.data());try{localStorage.setItem(KEY,JSON.stringify({v:3,...S}))}catch(e){}}
+    else if(S.t){dirty=true;flush()}
+    render();
+  }catch(e){}
+}
+
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2600)}
+function setStage(id,st){
+  const u=U(id).slice();
+  if(st>=1&&u[0]<1){u[1]=today();u[2]=0}
+  if(st<1){u[1]='';u[2]=0}
+  u[0]=st;
+  if(st===0)delete S.s[id];else S.s[id]=u;
+  commit();render();
+  if(st>=1&&!U(id)[2]&&dueOf(U(id)))toast('Revision scheduled: '+fmt(dueOf(U(id))))}
+function reviewed(id){const u=U(id).slice();u[2]=Math.min(5,u[2]+1);u[1]=today();S.s[id]=u;commit();render();toast(u[2]>=5?'Revision cycle complete ✔':'Next review: '+fmt(dueOf(u)))}
+function forgot(id){S.s[id]=[1,today(),0];commit();render();toast('Reset: review again tomorrow.')}
+function toggleWatch(lid){if(S.w[lid])delete S.w[lid];else S.w[lid]=today();commit();render()}
+
+function stats(list){let lec=list.length,w=0,un=0,l1=0,l2=0;
+  list.forEach(l=>{if(S.w[l.i])w++;l.u.forEach(u=>{un++;const s=U(u[0])[0];if(s>=1)l1++;if(s>=2)l2++})});
+  return {lec,w,un,l1,l2}}
+function inFocus(l){return focus==='all'||l.f===focus}
+function dueList(){const t=today(),out=[];
+  for(const id in S.s){const d=dueOf(S.s[id]);if(d&&d<=t&&UNIT[id])out.push({id,d})}
+  out.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);return out}
+function nextTask(){
+  const dl=dueList().filter(x=>inFocus(LECOF[x.id]));
+  if(dl.length)return {k:'rev',id:dl[0].id,d:dl[0].d};
+  const pl=plannedIds().map(id=>LECBY[id]).filter(Boolean),order=pl.concat(LEC.filter(l=>!pl.includes(l)));
+  for(const l of order){if(!inFocus(l)||!S.w[l.i])continue;for(const u of l.u)if(U(u[0])[0]<1)return {k:'learn',id:u[0],l}}
+  for(const l of order){if(inFocus(l)&&!S.w[l.i])return {k:'watch',l}}
+  return null}
+
+function ring(p){const r=50,c=2*Math.PI*r;return `<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="${r}" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="12"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-p)}"/></svg>`}
+function barHtml(p){return `<div class="bar"><i style="width:${Math.round(p*100)}%"></i></div>`}
+
+const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const wkStart=d=>addDays(d,-new Date(d+'T00:00:00').getDay());
+const curWeek=()=>addDays(wkStart(today()),wkOff*7);
+const emptyWk=()=>({s:[null,null,null,null],xs:[{e:0,sc:'',d:6}]});
+function getWk(k){const w=(S.k||{})[k];if(!w)return emptyWk();let a=(w.s||[]).slice();while(a.length>4&&!a[a.length-1])a.pop();while(a.length<4)a.push(null);
+  let xs=Array.isArray(w.xs)&&w.xs.length?w.xs.map(x=>({e:x.e?1:0,sc:x.sc??'',d:x.d==null?6:x.d})):[{e:w.x&&w.x.e?1:0,sc:w.x?w.x.sc??'':'',d:6}];
+  return {s:a,xs}}
+function putWk(k,w){if(!S.k)S.k={};delete w.x;S.k[k]=w;commit();render()}
+function plannedIds(){return getWk(wkStart(today())).s.filter(Boolean).map(x=>x.l)}
+function slotLabel(l){return l.l}
+function weekCard(){ /* compact card for Today */
+  const k=wkStart(today()),w=getWk(k),t=today(),dow=new Date(t+'T00:00:00').getDay();
+  const used=w.s.filter(Boolean),n=used.length,ex=used.filter(x=>x.e).length,xd=w.xs.filter(x=>x.e).length,xn=w.xs.length;
+  let h=`<section class="card"><h2>This week<span>${fmt(k)} – ${fmt(addDays(k,6))}</span></h2>`;
+  if(!n)h+=`<p class="empty">Add your lectures for this week and the daily and weekly exams.</p><button class="btn primary2" data-a="gweek">Plan this week</button>`;
+  else{
+    h+='<div class="wkrows">'+used.map(x=>{const l=LECBY[x.l];if(!l)return'';const st=stats([l]);const isToday=x.d===dow;
+      return `<button class="wkrow${isToday?' now':''}" style="--h:${hue(l.f)}" data-a="gweek"><span class="dot"></span><span class="wl"><b>${esc(l.l)}</b><small>${S.w[l.i]?'● watched':'○ not watched'} · ${st.l1}/${st.un} learned</small></span><span class="wd2">${x.d>=0?DOW[x.d]:''}${x.e?' <i>✔ exam</i>':''}</span></button>`}).join('')+'</div>';
+    const toSat=6-dow;
+    h+=`<p class="wkfoot"><b>${ex}/${n}</b> daily exams done · ${xd===xn?'weekly exam'+(xn>1?'s':'')+' done ✔':(toSat===0?'<b>Weekly exam today</b>':'Weekly exam on Saturday ('+toSat+' day'+(toSat>1?'s':'')+')')}</p>`}
+  return h+'</section>'}
+function renderWeek(){
+  const k=curWeek(),w=getWk(k),t=today(),now=wkOff===0;
+  const used=w.s.map(x=>x?LECBY[x.l]:null);
+  let h=`<div class="syl"><div class="wk-head"><button class="icon" data-a="wkprev" aria-label="Previous week">‹</button><div><b>${fmt(k)} – ${fmt(addDays(k,6))}</b><small>${now?'This week':wkOff<0?Math.abs(wkOff)+' week(s) ago':'In '+wkOff+' week(s)'}</small></div><button class="icon" data-a="wknext" aria-label="Next week">›</button>${now?'':'<button class="btn" data-a="wknow">This week</button>'}</div>`;
+  h+='<div class="days">'+DOW.map((n,i)=>{const d=addDays(k,i);const dots=w.s.map((x,j)=>x&&x.d===i&&used[j]?`<i style="--h:${hue(used[j].f)}"></i>`:'').join('');return `<div class="dp${d===t?' now':''}${w.xs.some(x=>x.d===i)?' sat':''}"><span>${n}</span><b>${new Date(d+'T00:00:00').getDate()}</b><em>${(()=>{const xx=w.xs.filter(x=>x.d===i);return xx.length?(xx.every(x=>x.e)?'✔':'Exam'):dots})()}</em></div>`}).join('')+'</div>';
+  h+=`<h2 class="plain">${w.s.filter(Boolean).length||w.s.length} lecture${w.s.length>1?'s':''} this week<span>one daily exam each</span></h2><div class="slots">`;
+  w.s.forEach((sl,i)=>{
+    const l=sl?LECBY[sl.l]:null;
+    if(!l){h+=`<button class="slot empty-slot" data-a="wkadd" data-i="${i}"><b>+</b><span>Add lecture ${i+1}</span></button>`;return}
+    const st=stats([l]),p=st.un?st.l1/st.un:0;
+    h+=`<article class="slot filled" style="--h:${hue(l.f)}"><div class="slot-top"><span class="num">${i+1}</span><div class="slot-t"><b>${esc(l.l)}</b><small>${esc(l.sn)} · ${st.un} topics</small></div><button class="icon sm" data-a="wkdel" data-i="${i}" aria-label="Remove lecture">×</button></div>
+    <div class="bar"><i style="width:${Math.round(p*100)}%"></i></div><p class="sub">${st.l1}/${st.un} topics learned</p>
+    <div class="slot-ctl"><button class="tg${S.w[l.i]?' on':''}" data-a="watch" data-lid="${l.i}">${S.w[l.i]?'✓ Watched':'Watched?'}</button>
+    <label class="sel"><span>Exam day</span><select data-a2="wkday" data-i="${i}"><option value="-1">Not set</option>${[0,1,2,3,4,5].map(d=>`<option value="${d}"${sl.d===d?' selected':''}>${DOW[d]}</option>`).join('')}</select></label></div>
+    <div class="slot-ctl"><button class="tg${sl.e?' on ok':''}" data-a="wkexam" data-i="${i}">${sl.e?'✓ Daily exam done':'Daily exam done?'}</button></div>
+    <button class="link" data-a="wkopen" data-lid="${l.i}">Open topics →</button></article>`});
+  h+='</div><button class="btn addmore" data-a="wkmore">+ Add another lecture</button>';
+  const n=w.s.filter(Boolean).length,ex=w.s.filter(x=>x&&x.e).length;
+  const covers=n?'Covers: '+w.s.filter(Boolean).map(x=>esc(LECBY[x.l].l)).join(' · '):'Add your lectures first. A weekly exam covers all of them.';
+  h+=`<h2 class="plain">${w.xs.length} weekly exam${w.xs.length>1?'s':''}<span>${ex}/${n} daily exams done</span></h2>`;
+  w.xs.forEach((x,i)=>{
+   h+=`<section class="card wx"><h2>Weekly exam ${w.xs.length>1?i+1:''}<span>${w.xs.length>1?'<button class="icon sm" data-a="wkxdel" data-i="'+i+'" aria-label="Remove exam">×</button>':''}</span></h2>
+   ${i===0?'<p class="empty" style="margin-bottom:10px">'+covers+'</p>':''}
+   <div class="slot-ctl"><button class="tg${x.e?' on ok':''}" data-a="wkx" data-i="${i}">${x.e?'✓ Weekly exam done':'Weekly exam done?'}</button>
+   <label class="sel"><span>Day</span><select data-a2="wkxday" data-i="${i}">${DOW.map((n2,d)=>`<option value="${d}"${x.d===d?' selected':''}>${n2}</option>`).join('')}</select></label></div></section>`});
+  h+='<button class="btn addmore" data-a="wkxmore">+ Add another weekly exam</button></div>';
+  return h}
+function openSheet(i){sheetSlot=i;sheetF='all';sheetQ='';$('#sheetQ').value='';$('#sheet').hidden=false;$('#sheetTitle').textContent='Pick lecture '+(i+1);renderSheet()}
+function closeSheet(){sheetSlot=null;$('#sheet').hidden=true}
+function renderSheet(){
+  if(sheetSlot===null)return;
+  const w=getWk(curWeek()),inWeek=new Set(w.s.filter(Boolean).map(x=>x.l)),usedF=new Set(w.s.filter(Boolean).map(x=>LECBY[x.l]&&LECBY[x.l].f));
+  $('#sheetChips').innerHTML=[['all','All']].concat(SUBJ.map(s=>[s.k,s.bn])).map(c=>`<button class="chip${c[0]==='all'?' all':''}" style="--h:${hue(c[0])}" data-a="sheetf" data-k="${c[0]}" aria-pressed="${sheetF===c[0]}">${c[0]!=='all'?'<i></i>':''}${esc(c[1])}${usedF.has(c[0])?' ✓':''}</button>`).join('');
+  const k=sheetQ.toLowerCase();
+  const L=LEC.filter(l=>(sheetF==='all'||l.f===sheetF)&&(!k||l.l.toLowerCase().includes(k)||l.u.some(u=>u[3].toLowerCase().includes(k))));
+  $('#sheetList').innerHTML=L.map(l=>{const dis=inWeek.has(l.i),st=stats([l]);return `<button class="pickrow" style="--h:${hue(l.f)}" data-a="wkpick" data-lid="${l.i}"${dis?' disabled':''}><span class="dot"></span><span><b>${esc(l.l)}</b><small>${esc(l.sn)} · ${st.un} topics${S.w[l.i]?' · watched':''}${dis?' · already this week':''}${!dis&&usedF.has(l.f)?' · same subject as another slot':''}</small></span></button>`}).join('')||'<p class="empty">No lectures match.</p>'}
+
+function streak(){const t=today();let d=S.d.includes(t)?t:addDays(t,-1),n=0;while(S.d.includes(d)){n++;d=addDays(d,-1)}return n}
+function greet(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening'}
+function miniRing(p){const r=15,c=2*Math.PI*r;return `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="${r}" fill="none" stroke="var(--surface2)" stroke-width="5"/><circle cx="20" cy="20" r="${r}" fill="none" stroke="var(--c)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-p)}" transform="rotate(-90 20 20)"/></svg>`}
+function renderToday(){
+  const A=stats(LEC),p=A.un?A.l1/A.un:0,t=today();
+  const ms=[.1,.25,.5,.75,1].find(m=>p<m);
+  const mile=ms?`${Math.ceil(ms*A.un)-A.l1} topics to the ${Math.round(ms*100)}% milestone`:'Every topic learned. Keep revising.';
+  const days=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);days.push({d,on:S.d.includes(d),today:i===0,l:new Date(d+'T00:00:00').toLocaleDateString('en-GB',{weekday:'narrow'})})}
+  const wk=days.filter(x=>x.on).length,st=streak();
+  const last=S.d.length?S.d[S.d.length-1]:null,gap=last?daysBetween(last,t):null;
+  const dl=dueList();
+  const learnedToday=Object.values(S.s).filter(u=>u[0]>=1&&u[1]===t&&u[2]===0).length;
+  const watchedToday=Object.values(S.w).filter(v=>v===t).length;
+  const plan=[
+    {done:dl.length===0,t:dl.length?`Revise ${dl.length} topic${dl.length>1?'s':''}`:'No revisions due',s:dl.length?'Do these first, they take a few minutes':'You are all caught up',c:'--due-c'},
+    {done:learnedToday>0,t:'Learn 1 new topic',s:learnedToday?`${learnedToday} learned today`:'Recall it from memory, then mark ◐',c:'--learn-c'},
+    {done:watchedToday>0,t:'Watch 1 class',s:watchedToday?`${watchedToday} watched today`:'Mark it watched when you finish',c:'--watch-c'}];
+  const pd=plan.filter(x=>x.done).length;
+  let L='',R='';
+  if(gap!==null&&gap>3)L+=`<div class="banner"><b>Welcome back.</b> ${gap} days away is fine. Don't catch up: one revision and one topic is a complete day.</div>`;
+  const nt=nextTask();
+  const opts=[['all','All subjects']].concat(SUBJ.map(s=>[s.k,s.bn+' · '+s.en])).map(o=>`<option value="${o[0]}"${o[0]===focus?' selected':''}>${esc(o[1])}</option>`).join('');
+  L+='<section class="next'+(nt&&nt.k==='rev'?' rev':nt&&nt.k==='learn'?' lrn':'')+'"><div class="next-in">';
+  if(!nt)L+=`<span class="tag">UP NEXT</span><p class="what">Nothing left in this focus. Pick another subject.</p>`;
+  else if(nt.k==='rev'){const u=UNIT[nt.id],l=LECOF[nt.id];L+=`<span class="tag">⟳ REVISE FIRST</span><p class="what">${esc(u[3])}</p><p class="where">${esc(l.l)} · due ${nt.d<t?'since '+fmt(nt.d):'today'}</p><div class="row-btns"><button class="btn primary" data-a="rev" data-id="${nt.id}">Reviewed ✓</button><button class="btn ghost" data-a="forgot" data-id="${nt.id}">Forgot it</button></div>`}
+  else if(nt.k==='learn'){const u=UNIT[nt.id];L+=`<span class="tag">LEARN NEXT</span><p class="what">${esc(u[3])}</p><p class="where">${esc(nt.l.l)} · watched, not learned yet</p><div class="row-btns"><button class="btn primary" data-a="stage" data-id="${nt.id}" data-st="1">I can recall it ◐</button><button class="btn ghost" data-a="open" data-lid="${nt.l.i}">Open lecture</button></div>`}
+  else L+=`<span class="tag">▶ WATCH NEXT</span><p class="what">${esc(nt.l.l)}</p><p class="where">${nt.l.u.length} topics inside</p><div class="row-btns"><button class="btn primary" data-a="watch" data-lid="${nt.l.i}">Mark watched ✓</button><button class="btn ghost" data-a="open" data-lid="${nt.l.i}">See topics</button></div>`;
+  L+=`<label class="focus">Focus <select id="focus">${opts}</select></label></div></section>`;
+  L+=weekCard();
+  R+=`<section class="card prog"><div class="prog-top"><div class="ring">${ring(p)}<div class="num"><div>${Math.round(p*100)}%<small>learned</small></div></div></div>
+   <div class="tiles"><div class="tile"><b>${A.w}<i>/${A.lec}</i></b><span>Classes watched</span></div><div class="tile"><b>${A.l1}<i>/${A.un}</i></b><span>Topics learned ◐</span></div><div class="tile"><b>${A.l2}</b><span>Practiced ✔</span></div><div class="tile"><b>${st}<i> day${st===1?'':'s'}</i></b><span>Current streak</span></div></div></div>
+   <p class="mile">${mile}</p>
+   <div class="week" aria-label="Days studied in the last 7 days">${days.map(x=>`<div class="wd${x.on?' on':''}${x.today?' now':''}"><i>${x.on?'✓':''}</i><span>${x.l}</span></div>`).join('')}</div></section>`;
+  if(dl.length){R+=`<section class="card"><h2>Revision due<span>${dl.length+' topic'+(dl.length>1?'s':'')}</span></h2>`;
+  {(showAllDue?dl:dl.slice(0,5)).forEach(x=>{const u=UNIT[x.id],l=LECOF[x.id];R+=`<div class="due-item"><div><p>${esc(u[3])}</p><small>${esc(l.l)} · <span class="pill-due">${x.d<t?'overdue':'today'}</span></small></div><button class="btn" data-a="rev" data-id="${x.id}">Done ✓</button></div>`});
+    if(dl.length>5)R+=`<button class="btn" style="margin-top:8px" data-a="moredue">${showAllDue?'Show fewer':'Show all '+dl.length}</button>`}
+  R+='</section>'}
+  R+='<section><h2 class="plain">Subjects<span>tap to open</span></h2><div class="sgrid">';
+  SUBJ.forEach(s=>{const x=stats(LEC.filter(l=>l.f===s.k)),pp=x.un?x.l1/x.un:0;
+    R+=`<button class="sc" style="--h:${hue(s.k)}" data-a="subj" data-k="${s.k}"><span class="mr">${miniRing(pp)}<b>${Math.round(pp*100)}%</b></span><span class="sn"><b>${esc(s.bn)}</b><em>${esc(s.en)}</em><small>${x.w}/${x.lec} classes · ${x.l1}/${x.un} topics</small></span></button>`});
+  R+='</div></section>';
+  return `<div class="hello"><div><h1>${greet()}, Nahid</h1><p>${wk} of 7 days studied this week</p></div></div><div class="cols"><div class="stack">${L}${R}</div></div>`}
+
+function lecMatches(l){
+  if(filt!=='all'&&l.f!==filt)return false;
+  if(onlyOpen){const done=l.u.every(u=>U(u[0])[0]>=1);if(done&&S.w[l.i])return false}
+  if(q){const k=q.toLowerCase();return l.l.toLowerCase().includes(k)||l.u.some(u=>u[3].toLowerCase().includes(k))}
+  return true}
+function topicHtml(u){
+  const us=U(u[0]),s=us[0],d=dueOf(us),t=today();
+  let h=`<div class="t"><div class="t-main"><p>${u[1]!=='T'?`<span class="tag2">${TYPE[u[1]]}</span>`:''}${u[2]?`<span class="tag2">${esc(u[2])}</span>`:''}${esc(u[3])}</p><button class="st st${s}" data-a="pick" data-id="${u[0]}" aria-expanded="${pick===u[0]}"><span aria-hidden="true">${ST[s].s}</span>${ST[s].sh}</button></div>`;
+  if(d){const over=d<=t;h+=`<div class="rv">${over?`<span class="pill-due">${d<t?'overdue':'due today'}</span><button class="btn" data-a="rev" data-id="${u[0]}">Reviewed ✓</button><button class="btn warn" data-a="forgot" data-id="${u[0]}">Forgot</button>`:`<span>Next review ${fmt(d)}</span>`}</div>`}
+  else if(s>=1&&us[2]>=5)h+='<div class="rv"><span>✔ Revision cycle complete</span></div>';
+  if(pick===u[0]){h+='<div class="pick" role="group" aria-label="Set status">'+ST.map((x,i)=>`<button class="p${i}" data-a="stage" data-id="${u[0]}" data-st="${i}" aria-pressed="${s===i}"><b>${x.s}</b>${x.sh}</button>`).join('')+'</div>'}
+  return h+'</div>'}
+function renderSyl(){
+  const chips=SUBJ.map(s=>`<button class="chip" style="--h:${hue(s.k)}" data-a="filt" data-k="${s.k}" aria-pressed="${filt===s.k}"><i></i>${esc(s.bn)}</button>`).join('');
+  return `<div class="syl"><div class="chips" role="group" aria-label="Subject"><button class="chip all" data-a="filt" data-k="all" aria-pressed="${filt==='all'}">All</button>${chips}</div>
+  <div class="tools"><input type="search" id="q" placeholder="Search topics or lectures" value="${esc(q)}" aria-label="Search"><div class="seg"><button data-a="only" data-v="0" aria-pressed="${!onlyOpen}">All</button><button data-a="only" data-v="1" aria-pressed="${onlyOpen}">Unfinished</button></div></div><div id="list"></div></div>`}
+function renderList(){
+  const L=LEC.filter(lecMatches);let h='';
+  if(!L.length)h='<p class="empty">No lectures match.</p>';
+  L.forEach(l=>{const st=stats([l]),p=st.un?st.l1/st.un:0,isOpen=open.has(l.i)||!!q;
+    h+=`<article class="lec" style="--h:${hue(l.f)}"><div class="lec-top"><button class="lec-head" data-a="toggle" data-lid="${l.i}" aria-expanded="${isOpen}"><b>${esc(l.l)}</b><span class="meta">${filt==='all'&&(l.f==='WLV'||l.f==='REC')?esc(l.sn)+' · ':''}${st.l1}/${st.un} learned${barHtml(p)}</span></button>
+    <button class="watch" data-a="watch" data-lid="${l.i}" aria-pressed="${!!S.w[l.i]}"><span class="box" aria-hidden="true">✓</span>${S.w[l.i]?'Watched':'Watched?'}</button></div>`;
+    if(isOpen){const k=q.toLowerCase();const us=l.u.filter(u=>!q||l.l.toLowerCase().includes(k)||u[3].toLowerCase().includes(k));h+='<div class="topics">'+us.map(topicHtml).join('')+'</div>'}
+    h+='</article>'});
+  $('#list').innerHTML=h}
+function render(){
+  $('#tabToday').setAttribute('aria-current',tab==='today'?'page':'false');
+  $('#tabSyl').setAttribute('aria-current',tab==='syl'?'page':'false');
+  $('#tabWeek').setAttribute('aria-current',tab==='week'?'page':'false');
+  const v=$('#view');
+  if(tab==='today'){v.innerHTML=renderToday()}
+  else if(tab==='week'){v.innerHTML=renderWeek()}
+  else{if(!$('#list')){v.innerHTML=renderSyl()}else{document.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.k===filt)));document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.v==='1')===onlyOpen)))}renderList()}
+}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
+  if(a==='gweek'){wkOff=0;goTab('week');return}
+  if(a==='wkprev'){wkOff--;render();return}
+  if(a==='wknext'){wkOff++;render();return}
+  if(a==='wknow'){wkOff=0;render();return}
+  if(a==='wkadd'){openSheet(+b.dataset.i);return}
+  if(a==='sheetclose'){closeSheet();return}
+  if(a==='sheetf'){sheetF=b.dataset.k;renderSheet();return}
+  if(a==='wkpick'){const k=curWeek(),w=getWk(k);w.s[sheetSlot]={l:b.dataset.lid,d:-1,e:0,sc:''};closeSheet();putWk(k,w);return}
+  if(a==='wkdel'){const k=curWeek(),w=getWk(k),i=+b.dataset.i;if(i>=4)w.s.splice(i,1);else w.s[i]=null;putWk(k,w);return}
+  if(a==='wkmore'){const k=curWeek(),w=getWk(k);w.s.push(null);putWk(k,w);openSheet(w.s.length-1);return}
+  if(a==='wkxmore'){const k=curWeek(),w=getWk(k);w.xs.push({e:0,sc:'',d:6});putWk(k,w);return}
+  if(a==='wkxdel'){const k=curWeek(),w=getWk(k);w.xs.splice(+b.dataset.i,1);putWk(k,w);return}
+  if(a==='wkexam'){const k=curWeek(),w=getWk(k),sl=w.s[+b.dataset.i];sl.e=sl.e?0:1;putWk(k,w);return}
+  if(a==='wkx'){const k=curWeek(),w=getWk(k),x=w.xs[+b.dataset.i];x.e=x.e?0:1;putWk(k,w);return}
+  if(a==='wkopen'){const l=LECBY[b.dataset.lid];open.add(l.i);filt=l.f;q='';onlyOpen=false;goTab('syl',()=>{const el=document.querySelector(`[data-lid="${l.i}"][data-a="toggle"]`);if(el)el.scrollIntoView({block:'center'})});return}
+  if(a==='rev')reviewed(b.dataset.id);
+  else if(a==='forgot')forgot(b.dataset.id);
+  else if(a==='stage'){const id=b.dataset.id;pick=null;setStage(id,+b.dataset.st)}
+  else if(a==='watch')toggleWatch(b.dataset.lid);
+  else if(a==='moredue'){showAllDue=!showAllDue;render()}
+  else if(a==='subj'){filt=b.dataset.k;q='';goTab('syl')}
+  else if(a==='open'){const lid=b.dataset.lid;open.add(lid);const l=LEC.find(x=>x.i===lid);filt=l.f;q='';onlyOpen=false;goTab('syl',()=>{const el=document.querySelector(`[data-lid="${lid}"][data-a="toggle"]`);if(el)el.scrollIntoView({block:'center'})})}
+  else if(a==='toggle'){const id=b.dataset.lid;open.has(id)?open.delete(id):open.add(id);pick=null;render()}
+  else if(a==='pick'){pick=pick===b.dataset.id?null:b.dataset.id;render()}
+  else if(a==='filt'){filt=b.dataset.k;pick=null;render();window.scrollTo({top:0})}
+  else if(a==='only'){onlyOpen=b.dataset.v==='1';render()}
+});
+document.addEventListener('input',e=>{if(e.target.id==='q'){q=e.target.value.trim();renderList()}if(e.target.id==='sheetQ'){sheetQ=e.target.value.trim();renderSheet()}});
+document.addEventListener('change',e=>{
+  const t=e.target;if(t.id==='focus'){focus=t.value;render();return}
+  const a=t.dataset.a2;if(!a)return;const k=curWeek(),w=getWk(k);
+  if(a==='wkday'){w.s[+t.dataset.i].d=+t.value;putWk(k,w)}
+  else if(a==='wksc'){w.s[+t.dataset.i].sc=t.value===''?'':Math.max(0,Math.min(100,+t.value));putWk(k,w)}
+  else if(a==='wkxsc'){w.xs[+t.dataset.i].sc=t.value===''?'':Math.max(0,Math.min(100,+t.value));putWk(k,w)}
+  else if(a==='wkxday'){w.xs[+t.dataset.i].d=+t.value;putWk(k,w)}
+});
+function goTab(t,cb){tab=t;pick=null;render();if(cb)cb();else window.scrollTo({top:0})}
+$('#tabToday').onclick=()=>goTab('today');
+$('#tabSyl').onclick=()=>goTab('syl');
+$('#tabWeek').onclick=()=>goTab('week');
+$('#date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
+
+const loc=loadLocal();if(loc)adopt(loc);
+render();
+initStore();
+</script>
