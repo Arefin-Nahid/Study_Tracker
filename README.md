@@ -1,42 +1,38 @@
-# BCS Tracker
+# Study Tracker
 
-A study tracker for the BCS Pioneer Batch syllabus. It tracks lectures, topics, weekly plans and exams, and syncs across devices.
+Study tracker, weekly plan and daily planner for the BCS preparation. Progress syncs across devices with Google sign-in.
 
 **Live:** https://arefin-nahid.github.io/Study_Tracker/
 
 ## Features
 - **Today:** what to watch or learn next, and this week's plan
-- **Week:** add your lectures and weekly exams (Sunday to Saturday)
+- **Week:** lectures and exams for Sunday to Saturday
+- **Planner:** prayers, daily schedule, focus timer, to-do and notes
 - **Syllabus:** all 145 lectures and 530 topics
-- **Sync:** sign in with Google and progress follows you across your phone and laptop
 
-## Files
+## Files (all in the repo root)
 | File | Purpose |
 |---|---|
 | `index.html` | The whole app, including the Firebase settings |
-| `manifest.webmanifest`, `icon.svg` | Home-screen install |
+| `study-tracker.webmanifest` | Install settings (name, icons) |
+| `sw.js` | Service worker: install and offline support |
+| `logo-32.png`, `logo-180.png`, `logo-192.png`, `logo-512.png`, `icon.svg` | App icons. All are required for install. |
+| `check.html` | Optional install checker |
+| `firestore.rules` | Database rules, paste in Firebase (not used by the site) |
 | `.nojekyll` | Tells GitHub Pages to serve files as they are |
 
-## Setup
-1. Firebase: turn on **Authentication → Google** and create a **Firestore** database.
-2. Firestore → Rules, paste and publish:
-   ```
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /users/{uid} {
-         allow read, write: if request.auth != null && request.auth.uid == uid;
-       }
-     }
-   }
-   ```
-3. Authentication → Settings → Authorized domains → add `arefin-nahid.github.io`.
-4. GitHub: Settings → Pages → Deploy from branch `main` / root.
+Do not keep `firebase-config.js`, `manifest.webmanifest` or other old files in the repo.
 
-## Use
-Open the link, tap **Sign in**, and use the same Google account on every device. On a phone, choose "Add to Home screen".
+## Setup
+1. Firebase: enable **Authentication, Google**, and create a **Firestore** database.
+2. Firestore, Rules: paste `firestore.rules` and publish.
+3. Authentication, Settings, Authorized domains: add `arefin-nahid.github.io`.
+4. GitHub: Settings, Pages, deploy from branch `main` / root.
+
+## Install as an app
+Open the live link in Chrome, wait 10 seconds, then menu, **Install app** (phone) or the install icon in the address bar (laptop). If it does not work, open `/check.html` on the site: it shows which file is missing.
 
 ## Troubleshooting
-- **Sign-in fails with "unauthorized-domain":** add the domain in step 3.
-- **Changes don't save:** check that the rules in step 2 are published.
+- **Cannot be installed:** open `logo-512.png` on the live site. If it shows 404, upload the icon files.
+- **Sign-in "unauthorized-domain":** add the domain in setup step 3.
 - **Old version showing:** hard refresh (Ctrl+Shift+R).
