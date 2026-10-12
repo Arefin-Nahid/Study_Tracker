@@ -581,8 +581,14 @@ initStore();
 <script type="module">
 // Firebase sync: Google sign-in + one Firestore document per user (users/<uid>).
 const btn=document.getElementById('acct');
-let cfg=null;
-try{cfg=(await import('./firebase-config.js')).firebaseConfig}catch(e){}
+const cfg={
+  apiKey:"AIzaSyAOUDKk5iBK8zwcIV-arsv9nQHnS3qOyOk",
+  authDomain:"studytracker-fab75.firebaseapp.com",
+  projectId:"studytracker-fab75",
+  storageBucket:"studytracker-fab75.firebasestorage.app",
+  messagingSenderId:"112345197317",
+  appId:"1:112345197317:web:d9ac3b9d2e77f9effaa56c"
+};
 if(cfg&&cfg.apiKey&&!String(cfg.apiKey).startsWith('PASTE')){
   const V='10.12.2',B='https://www.gstatic.com/firebasejs/'+V+'/';
   try{
