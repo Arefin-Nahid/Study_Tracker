@@ -925,6 +925,7 @@ const loc=loadLocal();if(loc)adopt(loc);
 render();
 initStore();
 </script>
+<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))</script>
 <script type="module">
 // Firebase sync: Google sign-in + one Firestore document per user (users/<uid>).
 const btn=document.getElementById('acct');
