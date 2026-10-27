@@ -9,3 +9,10 @@ window.FIREBASE_CONFIG = {
   messagingSenderId: "112345197317",
   appId: "1:112345197317:web:d9ac3b9d2e77f9effaa56c"
 };
+
+// AI plan (Gemini through Firebase AI Logic). Change only if Google retires a model name.
+// The app tries the models in order and remembers the one that works.
+window.AI_CONFIG = {
+  version: "13.1.0",
+  models: ["gemini-3.5-flash", "gemini-2.5-flash"]
+};
