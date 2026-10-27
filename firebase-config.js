@@ -16,3 +16,5 @@ window.AI_CONFIG = {
   version: "13.1.0",
   models: ["gemini-3.8-flash", "gemini-3.5-flash-lite"]
 };
+
+window.APP_CHECK_SITE_KEY = "6LfrxgMuAAAAAGJP9ll5Boqg-7kneO6bVdIeYRI2";
