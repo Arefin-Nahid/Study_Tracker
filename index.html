@@ -13,8 +13,8 @@
       type="image/svg+xml"
       href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwYzZlNjIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMyMmI1OGYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0idXJsKCNnKSIvPjxwYXRoIGQ9Ik0xMTggMTYwYzQ2LTE5IDkyLTE4IDEzNCAxM3YxODZjLTQyLTMwLTg4LTMxLTEzNC0xMnoiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNMzk0IDE2MGMtNDYtMTktOTItMTgtMTM0IDEzdjE4NmM0Mi0zMCA4OC0zMSAxMzQtMTJ6IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9Ii43MiIvPjxwYXRoIGQ9Ik0xNzkgMjYybDMxIDMxIDU2LTY0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwYzZlNjIiIHN0cm9rZS13aWR0aD0iMjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo="
     />
-    <link rel="icon" type="image/png" sizes="32x32" href="logo-32.png?v=2" />
-    <link rel="apple-touch-icon" href="logo-180.png?v=2" />
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/logo-32.png?v=2" />
+    <link rel="apple-touch-icon" href="icons/logo-180.png?v=2" />
     <title>Study Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,7 +22,7 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap"
     />
-    <link rel="stylesheet" href="styles.css?v=1" />
+    <link rel="stylesheet" href="css/styles.css?v=1" />
   </head>
   <body>
     <div class="wrap">
@@ -83,16 +83,16 @@
     </div>
     <div class="toast" id="toast" hidden role="status"></div>
 
-    <script src="data.js?v=1"></script>
-    <script src="app.js?v=1"></script>
-    <script src="planner.js?v=1"></script>
-    <script src="ai.js?v=1"></script>
-    <script src="boot.js?v=1"></script>
+    <script src="js/data.js?v=1"></script>
+    <script src="js/app.js?v=1"></script>
+    <script src="js/planner.js?v=1"></script>
+    <script src="js/ai.js?v=1"></script>
+    <script src="js/boot.js?v=1"></script>
     <script>
       if ("serviceWorker" in navigator)
         addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
     </script>
-    <script src="firebase-config.js"></script>
-    <script type="module" src="sync.js?v=1"></script>
+    <script src="config/firebase-config.js"></script>
+    <script type="module" src="js/sync.js?v=1"></script>
   </body>
 </html>
