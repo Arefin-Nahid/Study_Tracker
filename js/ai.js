@@ -11,10 +11,25 @@ const aiCfg = () =>
     { version: "13.1.0", models: ["gemini-3.8-flash", "gemini-3.5-flash-lite"] },
     window.AI_CONFIG || {},
   );
+const AI_EX = [
+  {
+    l: "English day",
+    t: "Focus on English Literature. Start at 9:00 AM for 8 hours of study. Revise previous lectures. Read the newspaper for 30 minutes and study vocabulary for 15 minutes daily. Take the exam at 9:00 PM.",
+  },
+  {
+    l: "Class day",
+    t: "Class 3 to 5 PM. Polity and math in the morning. Newspaper 30 minutes, vocabulary 15 minutes. Mock exam in the evening.",
+  },
+  {
+    l: "Light day",
+    t: "Light day: 5 hours from 10:00 AM. Revise previous lectures and do practice questions. Newspaper 30 minutes.",
+  },
+];
 function aiForm(msg) {
   return `${bkHead("AI plan", esc(new Date(pDate + "T00:00:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" })))}
   <p class="hint">Describe your day in your own words. It plans around your prayer times, target and revision due. You review it before anything is saved.</p>
   <label class="fld"><span>Your instruction</span><textarea id="ai-in" rows="4" maxlength="800" placeholder="e.g. Class 3 to 5 PM. Polity and math first, mock exam in the evening.">${esc(aiText)}</textarea></label>
+  <div class="aiex"><span>Try</span>${AI_EX.map((x, i) => `<button type="button" data-pa="aiex" data-i="${i}">${esc(x.l)}</button>`).join("")}</div>
   <label class="chk"><input id="ai-keep" type="checkbox" ${aiKeep ? "checked" : ""}> Keep my existing blocks and plan around them</label>
   ${msg ? `<p class="aierr">${esc(msg)}</p>` : ""}
   <div class="plact"><button class="btn primary2" data-pa="aigo" ${aiBusy ? "disabled" : ""}>${aiBusy ? "Planning…" : "Generate plan"}</button></div>`;
@@ -52,7 +67,7 @@ function aiBuildPrompt(text, keep) {
 }
 const AI_SYS = `You are a study-planning assistant for a university graduate preparing for a competitive government job exam (BCS). Turn the student's request into a one-day schedule of blocks.
 Rules:
-- Obey the student's instructions first (fixed class times, subjects, hours, wake time).
+- Obey the student's instructions first (fixed class times, subjects, hours, wake time). Use exact clock times and exact durations the student gives (for example "exam at 9 PM", "newspaper 30 minutes", "vocabulary 15 minutes"). If a start time and a number of study hours are given, begin at that time and plan that many hours of study blocks, leaving gaps for prayers and rest. "Revise previous lectures" means revise blocks titled with earlier lecture or topic names.
 - Use only these block types: class (class lecture), study (deep study of new material), revise (spaced revision), practice (question practice), exam (timed mock exam), news (newspaper and current affairs), vocab (new words and meanings), other.
 - Default total study time is studyTargetHours unless the request says otherwise. If nowTime is given, plan only after it.
 - Put the hardest new learning first when attention is highest. Deep-study blocks 60 to 90 minutes, practice and exam 45 to 90, news 30 to 45, vocab 15 to 25, revise 30 to 60. Put light tasks (news, vocab) after heavy ones. Aim for about 35% revise or practice or exam.

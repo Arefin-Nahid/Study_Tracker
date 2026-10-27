@@ -29,6 +29,10 @@ document.addEventListener("click", (e) => {
     aiRes = null;
     aiBusy = false;
     openPSheet(aiForm());
+  } else if (a === "aiex") {
+    const t = $("#ai-in");
+    t.value = AI_EX[+b.dataset.i].t;
+    t.focus();
   } else if (a === "aiback") {
     openPSheet(aiForm());
   } else if (a === "aigo") {

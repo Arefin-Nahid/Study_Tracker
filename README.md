@@ -37,9 +37,3 @@ firebase/firestore.rules   database rules to paste in Firebase
 4. **AI plan:** Firebase console, AI Services, AI Logic, Get started, choose the Gemini Developer API.
 5. **App Check:** register the web app with reCAPTCHA Enterprise, allow your domain, and set the site key in `config/firebase-config.js` (`APP_CHECK_SITE_KEY`).
 6. **GitHub:** Settings, Pages, deploy from branch `main` / root.
-
-## Notes
-- Update: replace files, commit, then hard refresh. Reopen the installed app once.
-- Model names are set in `config/firebase-config.js` (`AI_CONFIG.models`). Change them if Google retires one.
-- The Firebase and reCAPTCHA site keys are public by design. Never commit a reCAPTCHA secret key.
-- Opening `index.html` from your computer will not sign in; use the live site.
