@@ -418,6 +418,7 @@ textarea#ai-in:focus{outline:2px solid var(--accent);outline-offset:1px}
 .airow b{font-size:13px}.airow span{font-size:12px;color:var(--muted)}.airow strong{display:block;font-size:13.5px;overflow:hidden;text-overflow:ellipsis}.airow small{color:var(--muted);font-size:11.5px}
 .btn[disabled]{opacity:.6;pointer-events:none}
 @media (max-width:420px){.sch-act .btn{padding-inline:11px}}
+.card h2 span{font-weight:500}
 
 /* ---- responsive + account ---- */
 header.top{flex-wrap:nowrap}
@@ -724,6 +725,7 @@ document.addEventListener('click',e=>{
   else if(a==='filt'){filt=b.dataset.k;pick=null;render();window.scrollTo({top:0})}
   else if(a==='only'){onlyOpen=b.dataset.v==='1';render()}
 });
+document.addEventListener('change',e=>{if(e.target.id==='pf-t'){const v=e.target.value;$('#pf-tip').textContent=TIPS[v]||'';if(pEdit==='new')$('#pf-d').value=DDUR[v]||60}});
 document.addEventListener('input',e=>{if(e.target.id==='q'){q=e.target.value.trim();renderList()}if(e.target.id==='sheetQ'){sheetQ=e.target.value.trim();renderSheet()}});
 document.addEventListener('change',e=>{
   const t=e.target;if(t.id==='focus'){focus=t.value;render();return}
@@ -749,8 +751,8 @@ const BT={class:{n:'Class lecture',h:200},vocab:{n:'Vocabulary',h:45},study:{n:'
 const WORK=['class','study','revise','practice','exam','write','news','vocab'];
 let pDate=today(), pEdit=null;
 const getCfg=()=>{const c=S.c||{};return {pt:Object.assign({},PDEF,c.pt||{}),goal:c.goal||(c.ap&&c.ap.goal)||10}};
-const getDay=d=>{const x=(S.p||{})[d]||{};return {b:(x.b||[]).slice(),pr:Object.assign({},x.pr||{})}};
-function putDay(d,x){if(!S.p)S.p={};if(!x.b.length&&!Object.keys(x.pr).length)delete S.p[d];else S.p[d]=x;commit();render()}
+const getDay=d=>{const x=(S.p||{})[d]||{};return {b:(x.b||[]).slice(),pr:Object.assign({},x.pr||{}),ai:x.ai||null}};
+function putDay(d,x){if(!S.p)S.p={};if(!x.b.length)delete x.ai;if(x.ai===null)delete x.ai;if(!x.b.length&&!Object.keys(x.pr).length)delete S.p[d];else S.p[d]=x;commit();render()}
 const T12=m=>{m=((m%1440)+1440)%1440;const h=Math.floor(m/60),mm=m%60;return ((h%12)||12)+':'+String(mm).padStart(2,'0')+(h<12?' AM':' PM')};
 const T24=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
 const P24=s=>{const m=/^(\d{1,2}):(\d{2})/.exec(s||'');return m?(+m[1])*60+(+m[2]):null};
@@ -829,7 +831,7 @@ function renderPlanner(){
   h+=`<section class="card"><h2>Prayers<span>tap when prayed<button class="gear" data-pa="set" aria-label="Prayer times" title="Prayer times"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></span></h2><div class="prs">`+PRAY.map(n=>`<button class="pr${d.pr[n]?' on':''}" data-pa="pray" data-n="${n}" aria-pressed="${!!d.pr[n]}"><span class="pc">${d.pr[n]?'✓':''}</span><b>${PNAME[n]}</b><small>${T12(cfg.pt[n]).replace(' ','')}</small></button>`).join('')+`</div></section>`;
   const nb=items.filter(x=>x.k==='b').length;
   h+=`<div class="sch-h"><div><h2 class="plain">Schedule</h2><small>${nb?nb+' block'+(nb===1?'':'s')+' · '+DUR(pl)+' planned':'Nothing planned yet'}</small></div><div class="sch-act"><button class="btn ai" data-pa="ai"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg> AI plan</button><button class="btn primary2" data-pa="add">+ Add block</button></div></div>`;
-  h+=`<div class="qadd" role="group" aria-label="Quick add">`+QUICK.map(k=>`<button style="--h:${BT[k].h}" data-pa="qadd" data-v="${k}"><i></i>${BT[k].n}</button>`).join('')+`</div>`+(nb?mixHtml(items):'')+'<div class="tl">';
+  h+=(nb?mixHtml(items):'')+'<div class="tl">';
   let prevEnd=null,shown=0;
   items.forEach(x=>{
     prevEnd=Math.max(prevEnd??0,x.s+x.d);
@@ -840,9 +842,9 @@ function renderPlanner(){
     <button class="tl-body" data-pa="edit" data-id="${x.id}"><b>${esc(x.n||BT[x.t].n)}</b><small><span class="tg2">${BT[x.t].n}</span>${TECH[x.t]}${now?' · <em>Now</em>':''}</small></button>
     ${work&&!done?`<button class="tl-play" data-pa="focus" data-id="${x.id}" aria-label="Start focus timer">▶</button>`:'<span></span>'}
     <button class="tl-chk" data-pa="done" data-id="${x.id}" aria-pressed="${done}" aria-label="Mark done">${done?'✓':''}</button></div>`});
-  if(!shown)h+='<div class="empty-day"><b>No blocks yet</b><p>Tap a type above, or + Add block, when you want to plan something.</p></div>';
+  if(!shown)h+='<div class="empty-day"><b>No blocks yet</b><p>Tap + Add block, or let AI plan your day.</p></div>';
   h+='</div>';
-  if(nb)h+='<section class="card"><h2>Make it effective</h2><ul class="tips">'+insights(items,pDate).map(i=>`<li class="${i.c}">${esc(i.t)}</li>`).join('')+'</ul><details class="why"><summary>Planning guide for job exams</summary><ul><li>Put the hardest new learning first, when attention is highest.</li><li>Keep focus blocks at 60 to 90 minutes, then rest 10 to 15.</li><li>Do timed exams at the same hour daily to train for exam day.</li><li>Spend about 35% of self-study on spaced revision, not rereading.</li><li>Fit light tasks (newspaper, new words) after heavy ones.</li><li>Plan around prayers, not over them.</li><li>Sleep by 11 PM; memory consolidates overnight.</li></ul></details></section>';
+  if(nb&&d.ai&&d.ai.tips&&d.ai.tips.length)h+='<section class="card"><h2>Make it effective<span>From your AI plan</span></h2><ul class="tips">'+d.ai.tips.map(t=>`<li class="info">${esc(t)}</li>`).join('')+'</ul></section>';
   h+='</div>';
   return h}
 
@@ -853,8 +855,7 @@ function openBlock(id,start,type){
   pEdit=id||'new';const t=b?b.t:(type||'study'),s=b?b.s:(start??nextStart(pDate)),dur=b?b.d:(DDUR[t]||60);
   const kinds=['class','study','revise','practice','exam','news','vocab','other'].concat(['write','meal','break'].includes(t)?[t]:[]);
   openPSheet(`<div class="sheet-h"><b>${b?'Edit block':'New block'}</b><button class="btn" data-pa="close">Close</button></div>
-  <div class="fld"><span>Type</span><div class="tchips" id="pf-tc">${kinds.map(k=>`<button type="button" style="--h:${BT[k].h}" class="${k===t?'on':''}" data-pa="ptype" data-v="${k}">${BT[k].n}</button>`).join('')}</div></div>
-  <input id="pf-t" type="hidden" value="${t}">
+  <label class="fld"><span>Type</span><select id="pf-t">${kinds.map(k=>`<option value="${k}"${k===t?' selected':''}>${BT[k].n}</option>`).join('')}</select></label>
   <p class="ptip" id="pf-tip">${esc(TIPS[t]||'')}</p>
   <label class="fld"><span>Title (optional)</span><input id="pf-n" type="text" maxlength="80" placeholder="e.g. Bangla grammar, Math practice" value="${b?esc(b.n):''}"></label>
   <div class="fld2 two"><label class="fld"><span>Start</span><input id="pf-s" type="time" value="${T24(s)}"></label>
@@ -896,6 +897,7 @@ function aiPreview(){
   return `<div class="sheet-h"><b>Review plan</b><button class="btn" data-pa="close">Close</button></div>
   ${r.note?`<p class="ptip">${esc(r.note)}</p>`:''}
   <div class="aiw">${r.blocks.map(b=>`<div class="airow" style="--h:${BT[b.t].h}"><b>${T12(b.s).replace(' ','')}</b><span>${DUR(b.d)}</span><div><strong>${esc(b.n)}</strong><small>${BT[b.t].n}</small></div></div>`).join('')}</div>
+  ${r.tips.length?`<details class="why"><summary>Instructions (${r.tips.length})</summary><ul>${r.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></details>`:''}
   <p class="hint">${r.blocks.length} blocks · ${DUR(r.blocks.filter(b=>WORK.includes(b.t)).reduce((a,b)=>a+b.d,0))} of study${r.adj?' · '+r.adj+' adjusted around prayers or overlaps':''}</p>
   <div class="plact"><button class="btn primary2" data-pa="aiapply">Apply to schedule</button><button class="btn" data-pa="aiback">Edit instruction</button></div>`}
 function aiBuildPrompt(text,keep){
@@ -915,9 +917,10 @@ Rules:
 - Never schedule over a prayer window (prayer start plus its minutes) or over existingBlocks. Do not create meal or break blocks. Leave natural free gaps of 10 to 20 minutes between blocks.
 - Times are 24-hour HH:MM between 05:00 and 23:00, minutes are multiples of 5. Give each block a short specific title (use the lecture names given when relevant, or the subject the student named).
 - "note": one or two short sentences explaining the logic of the plan.
+- "tips": 4 to 6 short, specific instructions for carrying out THIS plan well (what to do in the main blocks, how to review mistakes, when to take your own breaks, how to protect focus, how to close the day). Reference the actual subjects and blocks in the plan. Evidence-based (active recall, spaced repetition, timed practice, error log). One sentence each, no markdown.
 Return JSON only.`;
 async function aiGetModel(name,Schema,getAI,getGenerativeModel,GoogleAIBackend,app){
-  const schema=Schema.object({properties:{note:Schema.string(),blocks:Schema.array({items:Schema.object({properties:{type:Schema.string(),title:Schema.string(),start:Schema.string(),minutes:Schema.number()}})})}});
+  const schema=Schema.object({properties:{note:Schema.string(),blocks:Schema.array({items:Schema.object({properties:{type:Schema.string(),title:Schema.string(),start:Schema.string(),minutes:Schema.number()}})}),tips:Schema.array({items:Schema.string()})}});
   const ai=getAI(app,{backend:new GoogleAIBackend()});
   return getGenerativeModel(ai,{model:name,systemInstruction:AI_SYS,generationConfig:{responseMimeType:'application/json',responseSchema:schema,temperature:0.4}})}
 function aiErr(e){
@@ -959,7 +962,7 @@ function aiFit(raw,keep){
     placed.push({s:s0,e:s0+dd,id:uid(),t:b0.t,n:b0.n||BT[b0.t].n,d:dd,x:0})}
   placed.sort((a,b)=>a.s-b.s);
   if(!placed.length)throw new Error('The AI returned no usable blocks. Try rewording your instruction.');
-  return {blocks:placed.map(({s,t,n,d,id,x})=>({id,t,n,s,d,x})),note:String(j.note||'').slice(0,240),adj}}
+  return {blocks:placed.map(({s,t,n,d,id,x})=>({id,t,n,s,d,x})),note:String(j.note||'').slice(0,240),tips:(Array.isArray(j.tips)?j.tips:[]).map(t=>String(t).trim().slice(0,220)).filter(Boolean).slice(0,6),adj}}
 
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-pa]');if(!b)return;const a=b.dataset.pa,d=getDay(pDate);
@@ -978,9 +981,8 @@ document.addEventListener('click',e=>{
     aiText=t;aiBusy=true;openPSheet(aiForm());
     aiRun(t,aiKeep).then(raw=>{aiRes=aiFit(raw,aiKeep);aiBusy=false;if(!$('#psheet').hidden)openPSheet(aiPreview())})
       .catch(e=>{aiBusy=false;if(!$('#psheet').hidden)openPSheet(aiForm(aiErr(e)))})}
-  else if(a==='aiapply'){if(!aiRes)return;const dd=getDay(pDate);if(!aiKeep)dd.b=dd.b.filter(x=>x.x);dd.b=dd.b.concat(aiRes.blocks);aiRes=null;closePSheet();putDay(pDate,dd);toast('Plan added to your schedule')}
+  else if(a==='aiapply'){if(!aiRes)return;const dd=getDay(pDate);if(!aiKeep)dd.b=dd.b.filter(x=>x.x);dd.b=dd.b.concat(aiRes.blocks);dd.ai={note:aiRes.note,tips:aiRes.tips};aiRes=null;closePSheet();putDay(pDate,dd);toast('Plan added to your schedule')}
   else if(a==='qadd')openBlock(null,undefined,b.dataset.v);
-  else if(a==='ptype'){const v=b.dataset.v;$('#pf-t').value=v;document.querySelectorAll('#pf-tc button').forEach(x=>x.classList.toggle('on',x===b));$('#pf-tip').textContent=TIPS[v]||'';if(pEdit==='new')$('#pf-d').value=DDUR[v]||60}
   else if(a==='pdur'){$('#pf-d').value=b.dataset.v}
   else if(a==='edit')openBlock(b.dataset.id);
   else if(a==='set')openSettings();
