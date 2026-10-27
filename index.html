@@ -943,7 +943,15 @@ async function aiRun(text,keep){
       const res=await Promise.race([m.generateContent(aiBuildPrompt(text,keep)),new Promise((_,rj)=>setTimeout(()=>rj(new Error('timeout')),45000))]);
       try{localStorage.setItem('st-ai-model',name)}catch(e){}
       return res.response.text()}
-    catch(e){last=e;if(!/404|not found|not supported|unsupported|model/i.test(String(e&&e.message)))throw e}}
+    catch(e){
+      last=e;
+
+      const msg=String(e?.message||e);
+
+      const retryable =
+        /404|not found|not supported|unsupported|model|quota|429|rate|exhaust/i.test(msg);
+
+      if(!retryable) throw e}}
   throw last||new Error('No model available')}
 function aiFit(raw,keep){
   let j;try{j=JSON.parse(String(raw).replace(/^```(?:json)?|```$/g,'').trim())}catch(e){throw new Error('The AI reply was not valid JSON')}

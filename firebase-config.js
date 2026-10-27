@@ -14,5 +14,5 @@ window.FIREBASE_CONFIG = {
 // The app tries the models in order and remembers the one that works.
 window.AI_CONFIG = {
   version: "13.1.0",
-  models: ["gemini-3.5-flash", "gemini-2.5-flash"]
+  models: ["gemini-3.8-flash", "gemini-3.5-flash-lite"]
 };
